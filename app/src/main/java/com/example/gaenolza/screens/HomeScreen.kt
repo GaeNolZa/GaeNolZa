@@ -1,4 +1,4 @@
-package com.example.gaenolza
+package com.example.gaenolza.screens
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -30,11 +30,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.gaenolza.R
 
 data class CardItem(val id: Int, val title: String, val content: String)
 
 @Composable
-fun MainScreen(
+fun HomeScreen(
     navController: NavController,
     onCardClick: (Int) -> Unit,
     horizontalCardWidth: Dp = 300.dp,

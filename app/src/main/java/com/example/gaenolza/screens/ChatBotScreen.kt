@@ -1,4 +1,4 @@
-package com.example.gaenolza
+package com.example.gaenolza.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
