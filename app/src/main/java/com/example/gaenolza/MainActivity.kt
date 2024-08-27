@@ -8,25 +8,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -38,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.gaenolza.screens.*
 import com.example.gaenolza.ui.theme.GaeNolZaTheme
 import com.exyte.animatednavbar.AnimatedNavigationBar
 import com.exyte.animatednavbar.animation.balltrajectory.Parabolic
@@ -50,24 +35,26 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             GaeNolZaTheme {
-                MyApp()
+                GaeNolzaMain()
             }
         }
     }
 }
 
+sealed class Screen(val route: String, val iconResourceId: Int?) {
+    data object Main : Screen("main", R.drawable.ic_home)
+    data object Hotel : Screen("hotel", R.drawable.ic_hotel)
+    data object Service : Screen("service", R.drawable.ic_service)
+    data object Profile : Screen("profile", R.drawable.ic_profile)
+    data object SignUp : Screen("signup", null)
+    data object Chat : Screen("chatScreen", null)
+}
+
 @Composable
-fun MyApp() {
+fun GaeNolzaMain() {
     val navController = rememberNavController()
     var selectedItem by remember { mutableIntStateOf(0) }
-    val items = listOf("홈", "호텔", "서비스", "프로필")
-
-    val iconResources = listOf(
-        R.drawable.ic_home,
-        R.drawable.ic_hotel,
-        R.drawable.ic_service,
-        R.drawable.ic_profile
-    )
+    val items = listOf(Screen.Main, Screen.Hotel, Screen.Service, Screen.Profile)
 
     Scaffold(
         bottomBar = {
@@ -85,18 +72,13 @@ fun MyApp() {
                     barColor = MaterialTheme.colorScheme.primary,
                     ballColor = MaterialTheme.colorScheme.primary
                 ) {
-                    items.forEachIndexed { index, item ->
+                    items.forEachIndexed { index, screen ->
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .noRippleClickable {
                                     selectedItem = index
-                                    when (index) {
-                                        0 -> navController.navigate("main")
-                                        1 -> navController.navigate("hotel")
-                                        2 -> navController.navigate("service")
-                                        3 -> navController.navigate("profile")
-                                    }
+                                    navController.navigate(screen.route)
                                 },
                             contentAlignment = Alignment.Center
                         ) {
@@ -105,8 +87,8 @@ fun MyApp() {
                                 verticalArrangement = Arrangement.Center
                             ) {
                                 Icon(
-                                    painter = painterResource(id = iconResources[index]),
-                                    contentDescription = item,
+                                    painter = painterResource(id = screen.iconResourceId!!),
+                                    contentDescription = screen.route,
                                     modifier = Modifier.size(24.dp),
                                     tint = if (selectedItem == index)
                                         MaterialTheme.colorScheme.onPrimary
@@ -115,7 +97,7 @@ fun MyApp() {
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    text = item,
+                                    text = screen.route,
                                     color = if (selectedItem == index)
                                         MaterialTheme.colorScheme.onPrimary
                                     else
@@ -132,24 +114,20 @@ fun MyApp() {
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = "main",
+            startDestination = Screen.Main.route,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable("main") {
-                MainScreen(
+            composable(Screen.Main.route) {
+                HomeScreen(
                     navController = navController,
                     onCardClick = { cardId ->
                         println("Card clicked: $cardId")
                     }
                 )
             }
-            composable("hotel") {
-                Text("호텔 화면", modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center))
-            }
-            composable("service") {
-                Text("서비스 화면", modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center))
-            }
-            composable("profile") {
+            composable(Screen.Hotel.route) { HotelScreen() }
+            composable(Screen.Service.route) { ServiceScreen() }
+            composable(Screen.Profile.route) {
                 LoginScreen(
                     onLoginClick = { name, email, password ->
                         println("Login attempt: Name - $name, Email - $email, Password - $password")
@@ -158,26 +136,24 @@ fun MyApp() {
                         println("Google Sign-In clicked")
                     },
                     onSignUpClick = {
-                        navController.navigate("signup")
+                        navController.navigate(Screen.SignUp.route)
                     },
                     onFingerprintClick = {
                         println("Fingerprint authentication clicked")
                     }
                 )
             }
-            composable("signup") {
+            composable(Screen.SignUp.route) {
                 SignupScreen(
                     onSignUpComplete = {
-                        navController.navigate("profile")
+                        navController.navigate(Screen.Profile.route)
                     },
                     onBackClick = {
                         navController.navigateUp()
                     }
                 )
             }
-            composable("chatScreen") {
-                ChatScreen()
-            }
+            composable(Screen.Chat.route) { ChatScreen() }
         }
     }
 }
@@ -194,6 +170,6 @@ fun Modifier.noRippleClickable(onClick: () -> Unit): Modifier = composed {
 @Composable
 fun DefaultPreview() {
     GaeNolZaTheme {
-        MyApp()
+        GaeNolzaMain()
     }
 }
