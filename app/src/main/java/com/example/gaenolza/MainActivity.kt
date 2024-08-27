@@ -131,11 +131,19 @@ fun MyApp() {
                     1 -> Text("호텔 화면", modifier = Modifier.align(Alignment.Center))
                     2 -> Text("서비스 화면", modifier = Modifier.align(Alignment.Center))
                     3 -> LoginScreen(
-                        onLoginClick = { username, password ->
-                            println("Login attempt: Username - $username, Password - $password")
+                        onLoginClick = { name, email, password ->
+                            println("Login attempt: Name - $name ,Email - $email, Password - $password")
+                        },
+                        onGoogleSignInClick = {
+                            println("Google Sign-In clicked")
+                            // TODO: Implement Google Sign-In
                         },
                         onSignUpClick = {
                             showSignUp = true
+                        },
+                        onFingerprintClick = {
+                            println("Fingerprint authentication clicked")
+                            // TODO: Implement fingerprint authentication
                         }
                     )
                 }
