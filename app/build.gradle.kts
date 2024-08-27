@@ -50,8 +50,6 @@ android {
 }
 
 dependencies {
-
-    implementation("com.exyte:animated-navigation-bar:1.0.0")
     implementation (libs.material3)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -68,4 +66,14 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    // exyte : animated bottom navigation
+    implementation("com.exyte:animated-navigation-bar:1.0.0")
+
+    // Navigation Gradle
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+
+    // Retrofit2 Gradle
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 }
