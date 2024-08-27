@@ -1,5 +1,6 @@
 package com.example.gaenolza
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -7,9 +8,25 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -18,6 +35,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.gaenolza.ui.theme.GaeNolZaTheme
 import com.exyte.animatednavbar.AnimatedNavigationBar
 import com.exyte.animatednavbar.animation.balltrajectory.Parabolic
@@ -38,7 +58,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MyApp() {
-    var showSignUp by remember { mutableStateOf(false) }
+    val navController = rememberNavController()
     var selectedItem by remember { mutableIntStateOf(0) }
     val items = listOf("홈", "호텔", "서비스", "프로필")
 
@@ -71,7 +91,12 @@ fun MyApp() {
                                 .fillMaxSize()
                                 .noRippleClickable {
                                     selectedItem = index
-                                    showSignUp = false // Close SignUp screen if open
+                                    when (index) {
+                                        0 -> navController.navigate("main")
+                                        1 -> navController.navigate("hotel")
+                                        2 -> navController.navigate("service")
+                                        3 -> navController.navigate("profile")
+                                    }
                                 },
                             contentAlignment = Alignment.Center
                         ) {
@@ -105,53 +130,59 @@ fun MyApp() {
             }
         }
     ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
+        NavHost(
+            navController = navController,
+            startDestination = "main",
+            modifier = Modifier.padding(innerPadding)
         ) {
-            if (showSignUp) {
-                SignupScreen(
-                    onSignUpComplete = {
-                        showSignUp = false
-                        selectedItem = 3  // 프로필 탭 (로그인 화면)으로 이동
-                    },
-                    onBackClick = {
-                        showSignUp = false
-                        selectedItem = 3  // 프로필 탭 (로그인 화면)으로 이동
+            composable("main") {
+                MainScreen(
+                    navController = navController,
+                    onCardClick = { cardId ->
+                        println("Card clicked: $cardId")
                     }
                 )
-            } else {
-                when (selectedItem) {
-                    0 -> MainScreen(
-                        onCardClick = { cardId ->
-                            println("Card clicked: $cardId")
-                        },
-                    )
-                    1 -> Text("호텔 화면", modifier = Modifier.align(Alignment.Center))
-                    2 -> Text("서비스 화면", modifier = Modifier.align(Alignment.Center))
-                    3 -> LoginScreen(
-                        onLoginClick = { name, email, password ->
-                            println("Login attempt: Name - $name ,Email - $email, Password - $password")
-                        },
-                        onGoogleSignInClick = {
-                            println("Google Sign-In clicked")
-                            // TODO: Implement Google Sign-In
-                        },
-                        onSignUpClick = {
-                            showSignUp = true
-                        },
-                        onFingerprintClick = {
-                            println("Fingerprint authentication clicked")
-                            // TODO: Implement fingerprint authentication
-                        }
-                    )
-                }
+            }
+            composable("hotel") {
+                Text("호텔 화면", modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center))
+            }
+            composable("service") {
+                Text("서비스 화면", modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center))
+            }
+            composable("profile") {
+                LoginScreen(
+                    onLoginClick = { name, email, password ->
+                        println("Login attempt: Name - $name, Email - $email, Password - $password")
+                    },
+                    onGoogleSignInClick = {
+                        println("Google Sign-In clicked")
+                    },
+                    onSignUpClick = {
+                        navController.navigate("signup")
+                    },
+                    onFingerprintClick = {
+                        println("Fingerprint authentication clicked")
+                    }
+                )
+            }
+            composable("signup") {
+                SignupScreen(
+                    onSignUpComplete = {
+                        navController.navigate("profile")
+                    },
+                    onBackClick = {
+                        navController.navigateUp()
+                    }
+                )
+            }
+            composable("chatScreen") {
+                ChatScreen()
             }
         }
     }
 }
 
+@SuppressLint("ModifierFactoryUnreferencedReceiver")
 @Composable
 fun Modifier.noRippleClickable(onClick: () -> Unit): Modifier = composed {
     clickable(indication = null, interactionSource = remember { MutableInteractionSource() }) {
