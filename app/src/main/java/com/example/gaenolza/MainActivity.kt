@@ -23,6 +23,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.gaenolza.screens.*
+import com.example.gaenolza.screens.chatbot.ChatBotScreen
 import com.example.gaenolza.ui.theme.GaeNolZaTheme
 import com.exyte.animatednavbar.AnimatedNavigationBar
 import com.exyte.animatednavbar.animation.balltrajectory.Parabolic
@@ -153,7 +154,7 @@ fun GaeNolzaMain() {
                     }
                 )
             }
-            composable(Screen.Chat.route) { ChatScreen() }
+            composable(Screen.Chat.route) { ChatBotScreen() }
         }
     }
 }
