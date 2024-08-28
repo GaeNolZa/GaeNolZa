@@ -27,7 +27,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.gaenolza.R
@@ -37,11 +36,10 @@ data class CardItem(val id: Int, val title: String, val content: String)
 @Composable
 fun HomeScreen(
     navController: NavController,
-    onCardClick: (Int) -> Unit,
-    horizontalCardWidth: Dp = 300.dp,
-    horizontalCardHeight: Dp = 200.dp,
-    verticalCardHeight: Dp = 200.dp
+    onCardClick: (Int) -> Unit
 ) {
+    val cardHeight = 200.dp
+    val cardWidth = 300.dp
     val horizontalCards = remember { generateItems(2) }
     val verticalCards = remember { generateItems(1) }
 
@@ -60,13 +58,13 @@ fun HomeScreen(
             }
 
             items(verticalCards) { item ->
-                MyCard(
+                HomeCard(
                     title = item.title,
                     content = item.content,
                     onClick = { onCardClick(item.id) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(verticalCardHeight)
+                        .height(cardHeight)
                         .padding(vertical = 4.dp)
                 )
             }
@@ -83,38 +81,38 @@ fun HomeScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(horizontalCards) { item ->
-                        MyCard(
+                        HomeCard(
                             title = item.title,
                             content = item.content,
                             onClick = { onCardClick(item.id) },
                             modifier = Modifier
-                                .width(horizontalCardWidth)
-                                .height(horizontalCardHeight)
+                                .width(cardWidth)
+                                .height(cardHeight)
                         )
                     }
                 }
             }
             items(verticalCards) { item ->
                 Spacer(modifier = Modifier.height(16.dp))
-                MyCard(
+                HomeCard(
                     title = item.title,
                     content = item.content,
                     onClick = { onCardClick(item.id) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(verticalCardHeight)
+                        .height(cardHeight)
                         .padding(vertical = 4.dp)
                 )
             }
             items(verticalCards) { item ->
                 Spacer(modifier = Modifier.height(16.dp))
-                MyCard(
+                HomeCard(
                     title = item.title,
                     content = item.content,
                     onClick = { onCardClick(item.id) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(verticalCardHeight)
+                        .height(cardHeight)
                         .padding(vertical = 4.dp)
                 )
             }
@@ -140,7 +138,7 @@ fun HomeScreen(
 }
 
 @Composable
-fun MyCard(title: String, content: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun HomeCard(title: String, content: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier
             .clickable(onClick = onClick),
