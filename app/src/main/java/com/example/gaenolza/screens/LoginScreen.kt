@@ -2,12 +2,10 @@ package com.example.gaenolza.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,10 +18,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
@@ -38,12 +35,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
@@ -53,6 +48,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gaenolza.R
+import com.example.gaenolza.ui.theme.ColorPalette
 import com.example.gaenolza.ui.theme.poppins
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,36 +59,31 @@ fun LoginScreen(
     onSignUpClick: () -> Unit,
     onFingerprintClick: () -> Unit
 ) {
-    val sheetState = rememberModalBottomSheetState()
-    val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) { showBottomSheet = true }
 
-    LaunchedEffect(Unit) {
-        showBottomSheet = true
-    }
-
+    val sheetState = rememberModalBottomSheetState()
     Box(
         modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
-        // 배경 이미지나 색상을 여기에 추가할 수 있습니다.
-    }
+        if (showBottomSheet) {
+            ModalBottomSheet(
+                onDismissRequest = { showBottomSheet = false },
+                sheetState = sheetState,
+                containerColor = Color.White,
+                shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
+                content = {
+                    LoginContent(
+                        onLoginClick = onLoginClick,
+                        onGoogleSignInClick = onGoogleSignInClick,
+                        onSignUpClick = onSignUpClick,
+                        onFingerprintClick = onFingerprintClick
+                    )
+                }
+            )
+        }
 
-    if (showBottomSheet) {
-        ModalBottomSheet(
-            onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState,
-            containerColor = Color.White,
-            shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
-            content = {
-                LoginContent(
-                    onLoginClick = onLoginClick,
-                    onGoogleSignInClick = onGoogleSignInClick,
-                    onSignUpClick = onSignUpClick,
-                    onFingerprintClick = onFingerprintClick
-                )
-            }
-        )
     }
 }
 
@@ -130,7 +121,7 @@ fun LoginContent(
                         )
                     )
                     Text(
-                        text = " 에서",
+                        text = "에",
                         style = MaterialTheme.typography.headlineMedium.copy(
                             fontFamily = poppins,
                             fontWeight = FontWeight.SemiBold,
@@ -140,7 +131,7 @@ fun LoginContent(
                     )
                 }
                 Text(
-                    text = "같이놀자~! 왈왈!",
+                    text = "돌아와서 기뻐!",
                     style = MaterialTheme.typography.headlineMedium.copy(
                         fontFamily = FontFamily(Font(R.font.poppins_semibold)),
                         fontWeight = FontWeight.SemiBold,
@@ -158,20 +149,20 @@ fun LoginContent(
         }
 
         Spacer(modifier = Modifier.height(24.dp))
-        OutlinedTextField(
-            value = name,
-            onValueChange = { name = it },
-            placeholder = { Text("개놀자", color = Color.Gray) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            shape = CircleShape,
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                containerColor = Color(0xFFEBF4FD),
-                focusedBorderColor = Color.Transparent,
-                unfocusedBorderColor = Color.Transparent
-            )
-        )
+//        OutlinedTextField(
+//            value = name,
+//            onValueChange = { name = it },
+//            placeholder = { Text("개놀자", color = Color.Gray) },
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(vertical = 8.dp),
+//            shape = CircleShape,
+//            colors = TextFieldDefaults.outlinedTextFieldColors(
+//                containerColor = Color(0xFFEBF4FD),
+//                focusedBorderColor = Color.Transparent,
+//                unfocusedBorderColor = Color.Transparent
+//            )
+//        )
 
         OutlinedTextField(
             value = email,
@@ -241,7 +232,7 @@ fun LoginContent(
                 .fillMaxWidth()
                 .height(56.dp),
             shape = CircleShape,
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF5BA0))
+            colors = ButtonDefaults.buttonColors(ColorPalette.primaryPink)
         ) {
             Text(
                 text = "로그인",
@@ -258,22 +249,22 @@ fun LoginContent(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Divider(
-                color = Color.LightGray,
+            HorizontalDivider(
                 modifier = Modifier
                     .weight(1f)
-                    .height(1.dp)
+                    .height(1.dp),
+                color = Color.LightGray
             )
             Text(
                 text = "또는",
                 color = Color.Gray,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
-            Divider(
-                color = Color.LightGray,
+            HorizontalDivider(
                 modifier = Modifier
                     .weight(1f)
-                    .height(1.dp)
+                    .height(1.dp),
+                color = Color.LightGray
             )
         }
 
@@ -316,7 +307,7 @@ fun LoginContent(
                 Text(
                     text = "회원가입",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color(0xFFFF5BA0),
+                    color = ColorPalette.primaryPink,
                     fontWeight = FontWeight.Bold
                 )
             }
