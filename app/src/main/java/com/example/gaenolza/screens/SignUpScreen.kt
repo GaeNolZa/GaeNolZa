@@ -52,9 +52,6 @@ fun SignupScreen(onSignUpComplete: () -> Unit, onBackClick: () -> Unit) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            TextButton(onClick = onBackClick) {
-                Text(text = "돌아가기")
-            }
             Text("회원가입", style = MaterialTheme.typography.headlineMedium)
             Spacer(Modifier.width(48.dp))
         }
