@@ -48,7 +48,7 @@ sealed class Screen(val route: String, val iconResourceId: Int?) {
     data object Service : Screen("service", R.drawable.ic_service)
     data object Profile : Screen("profile", R.drawable.ic_profile)
     data object SignUp : Screen("signup", null)
-    data object Chat : Screen("chatScreen", null)
+    data object ChatBot : Screen("chatScreen", null)
 }
 
 @Composable
@@ -126,8 +126,6 @@ fun GaeNolzaMain() {
                     }
                 )
             }
-            composable(Screen.Hotel.route) { HotelScreen() }
-            composable(Screen.Service.route) { ServiceScreen() }
             composable(Screen.Profile.route) {
                 LoginScreen(
                     onLoginClick = { name, email, password ->
@@ -144,17 +142,10 @@ fun GaeNolzaMain() {
                     }
                 )
             }
-            composable(Screen.SignUp.route) {
-                SignupScreen(
-                    onSignUpComplete = {
-                        navController.navigate(Screen.Profile.route)
-                    },
-                    onBackClick = {
-                        navController.navigateUp()
-                    }
-                )
-            }
-            composable(Screen.Chat.route) { ChatBotScreen() }
+            composable(Screen.SignUp.route) { SignupScreen(navController) }
+            composable(Screen.ChatBot.route) { ChatBotScreen() }
+            composable(Screen.Service.route) { ServiceScreen() }
+            composable(Screen.Hotel.route) { HotelScreen() }
         }
     }
 }
