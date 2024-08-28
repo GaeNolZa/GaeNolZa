@@ -76,4 +76,7 @@ dependencies {
     // Retrofit2 Gradle
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // MLKit - Translate Grdale
+    implementation("com.google.mlkit:translate:17.0.2")
 }
