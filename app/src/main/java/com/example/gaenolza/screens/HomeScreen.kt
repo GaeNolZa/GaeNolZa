@@ -10,34 +10,23 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.example.gaenolza.R
 
 data class CardItem(val id: Int, val title: String, val content: String)
 
 @Composable
-fun HomeScreen(
-    navController: NavController,
-    onCardClick: (Int) -> Unit
-) {
+fun HomeScreen() {
     val cardHeight = 200.dp
     val cardWidth = 300.dp
     val horizontalCards = remember { generateItems(2) }
@@ -61,7 +50,7 @@ fun HomeScreen(
                 HomeCard(
                     title = item.title,
                     content = item.content,
-                    onClick = { onCardClick(item.id) },
+                    onClick = {  },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(cardHeight)
@@ -84,7 +73,7 @@ fun HomeScreen(
                         HomeCard(
                             title = item.title,
                             content = item.content,
-                            onClick = { onCardClick(item.id) },
+                            onClick = {  },
                             modifier = Modifier
                                 .width(cardWidth)
                                 .height(cardHeight)
@@ -97,7 +86,7 @@ fun HomeScreen(
                 HomeCard(
                     title = item.title,
                     content = item.content,
-                    onClick = { onCardClick(item.id) },
+                    onClick = {  },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(cardHeight)
@@ -109,30 +98,13 @@ fun HomeScreen(
                 HomeCard(
                     title = item.title,
                     content = item.content,
-                    onClick = { onCardClick(item.id) },
+                    onClick = {  },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(cardHeight)
                         .padding(vertical = 4.dp)
                 )
             }
-        }
-
-        FloatingActionButton(
-            onClick = { navController.navigate("chatScreen") },
-            shape = CircleShape,
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(16.dp),
-
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_flat),
-                contentDescription = "Add",
-                modifier = Modifier.size(24.dp)
-            )
         }
     }
 }
