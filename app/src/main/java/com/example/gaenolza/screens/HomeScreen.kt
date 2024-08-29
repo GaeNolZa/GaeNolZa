@@ -1,5 +1,6 @@
 package com.example.gaenolza.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -123,15 +125,13 @@ fun HomeScreen(
             shape = CircleShape,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(16.dp),
-
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary
+                .padding(16.dp)
+                .size(72.dp),
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_flat),
+            Image(
+                painter = painterResource(id = R.drawable.ic_chat),
                 contentDescription = "Add",
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.wrapContentSize()
             )
         }
     }
