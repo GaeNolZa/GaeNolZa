@@ -1,45 +1,29 @@
 package com.example.gaenolza
 
+import HomeScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.view.WindowCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.gaenolza.screens.HomeScreen
-import com.example.gaenolza.screens.HotelScreen
-import com.example.gaenolza.screens.LoginScreen
-import com.example.gaenolza.screens.ServiceScreen
-import com.example.gaenolza.screens.SignupScreen
+import com.example.gaenolza.screens.*
 import com.example.gaenolza.screens.chatbot.ChatBotScreen
 import com.example.gaenolza.ui.theme.GaeNolZaTheme
 import com.exyte.animatednavbar.AnimatedNavigationBar
@@ -50,6 +34,11 @@ import com.exyte.animatednavbar.animation.indendshape.shapeCornerRadius
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        WindowCompat.getInsetsController(window, window.decorView).apply {
+            isAppearanceLightStatusBars = true
+            isAppearanceLightNavigationBars = true
+        }
         enableEdgeToEdge()
         setContent {
             GaeNolZaTheme {
@@ -60,18 +49,18 @@ class MainActivity : ComponentActivity() {
 }
 
 sealed class Screen(val route: String, val iconResourceId: Int?) {
-    data object Main : Screen("main", R.drawable.ic_home_renew)
-    data object Hotel : Screen("hotel", R.drawable.ic_hotel)
-    data object Service : Screen("service", R.drawable.ic_service)
-    data object Profile : Screen("profile", R.drawable.ic_profile)
-    data object SignUp : Screen("signup", null)
-    data object ChatBot : Screen("chatScreen", null)
+    data object Main : Screen("홈 화면", R.drawable.ic_home_renew)
+    data object Hotel : Screen("호텔", R.drawable.ic_hotel)
+    data object Service : Screen("서비스", R.drawable.ic_service)
+    data object Profile : Screen("마이 페이지", R.drawable.ic_profile)
+    data object SignUp : Screen("회원 가입", null)
+    data object ChatBot : Screen("챗봇", null)
 }
 
 @Composable
 fun GaeNolZaMain() {
     val navController = rememberNavController()
-    var selectedItem by remember { mutableIntStateOf(0) }
+    var selectedItem by remember { mutableStateOf(0) }
     val items = listOf(Screen.Main, Screen.Hotel, Screen.Service, Screen.Profile)
 
     Scaffold(
@@ -88,8 +77,8 @@ fun GaeNolZaMain() {
                     cornerRadius = shapeCornerRadius(cornerRadius = 34.dp),
                     ballAnimation = Parabolic(tween(300)),
                     indentAnimation = Height(tween(300)),
-                    barColor = MaterialTheme.colorScheme.primary,
-                    ballColor = MaterialTheme.colorScheme.primary
+                    barColor = Color(0xFF393939),
+                    ballColor = Color(0xFFFF5BA0)
                 ) {
                     items.forEachIndexed { index, screen ->
                         Box(
@@ -169,7 +158,6 @@ fun GaeNolZaMain() {
         }
     }
 }
-
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
