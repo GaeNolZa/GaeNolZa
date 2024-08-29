@@ -87,22 +87,22 @@ fun HomeScreen(
             item { VeterinarianSection(onVeterinarianClick = { /* TODO: Handle vet click */ }) }
         }
 
-        FloatingActionButton(
-            onClick = { navController.navigate("chatScreen") },
-            shape = CircleShape,
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(16.dp)
-                .shadow(elevation = 6.dp, shape = CircleShape),
-            containerColor = Color(0xFFFF5BA0),
-            contentColor = Color.White
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_flat),
-                contentDescription = "Add",
-                modifier = Modifier.size(24.dp)
-            )
-        }
+//        FloatingActionButton(
+//            onClick = { navController.navigate("chatScreen") },
+//            shape = CircleShape,
+//            modifier = Modifier
+//                .align(Alignment.BottomEnd)
+//                .padding(16.dp)
+//                .shadow(elevation = 6.dp, shape = CircleShape),
+//            containerColor = Color(0xFFFF5BA0),
+//            contentColor = Color.White
+//        ) {
+//            Icon(
+//                painter = painterResource(id = R.drawable.ic_flat),
+//                contentDescription = "Add",
+//                modifier = Modifier.size(24.dp)
+//            )
+//        }
     }
 }
 
