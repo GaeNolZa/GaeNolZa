@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -35,9 +36,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.gaenolza.network.sendLoginData
 import com.example.gaenolza.screens.HomeScreen
 import com.example.gaenolza.screens.HotelScreen
 import com.example.gaenolza.screens.LoginScreen
+import com.example.gaenolza.screens.MyPageScreen
 import com.example.gaenolza.screens.ServiceScreen
 import com.example.gaenolza.screens.SignupScreen
 import com.example.gaenolza.screens.chatbot.ChatBotScreen
@@ -46,6 +49,9 @@ import com.exyte.animatednavbar.AnimatedNavigationBar
 import com.exyte.animatednavbar.animation.balltrajectory.Parabolic
 import com.exyte.animatednavbar.animation.indendshape.Height
 import com.exyte.animatednavbar.animation.indendshape.shapeCornerRadius
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,11 +72,13 @@ sealed class Screen(val route: String, val iconResourceId: Int?) {
     data object Profile : Screen("profile", R.drawable.ic_profile)
     data object SignUp : Screen("signup", null)
     data object ChatBot : Screen("chatScreen", null)
+    data object MyPage : Screen("myPage", null)
 }
 
 @Composable
 fun GaeNolZaMain() {
     val navController = rememberNavController()
+    var isLoggedIn by remember { mutableStateOf(false) }
     var selectedItem by remember { mutableIntStateOf(0) }
     val items = listOf(Screen.Main, Screen.Hotel, Screen.Service, Screen.Profile)
 
@@ -147,25 +155,53 @@ fun GaeNolZaMain() {
                 )
             }
             composable(Screen.Profile.route) {
-                LoginScreen(
-                    onLoginClick = { name, email, password ->
-                        println("Login attempt: Name - $name, Email - $email, Password - $password")
-                    },
-                    onGoogleSignInClick = {
-                        println("Google Sign-In clicked")
-                    },
-                    onSignUpClick = {
-                        navController.navigate(Screen.SignUp.route)
-                    },
-                    onFingerprintClick = {
-                        println("Fingerprint authentication clicked")
-                    }
-                )
+                if (isLoggedIn) { // 로그인 상태에 따른 분기 처리
+                    navController.navigate(Screen.MyPage.route) // 로그인 상태일 경우 MyPage로 이동
+                } else {
+                    LoginScreen(
+                        onLoginClick = { _, email, password ->
+                            CoroutineScope(Dispatchers.IO).launch {
+                                sendLoginData(
+                                    email = email,
+                                    password = password
+                                ) { result ->
+                                    result.fold(
+                                        onSuccess = { responseData ->
+                                            println("Login successful: $responseData")
+                                            isLoggedIn = true // 로그인 성공 시 상태 업데이트
+                                            CoroutineScope(Dispatchers.Main).launch {
+                                                navController.navigate(Screen.MyPage.route) {
+                                                    popUpTo(Screen.Profile.route) {
+                                                        inclusive = true
+                                                    }
+                                                    // 이전 Profile 화면을 스택에서 제거하여 뒤로가기 시 돌아가지 않도록 설정
+                                                }
+                                            }
+                                        },
+                                        onFailure = { error ->
+                                            println("Login failed: ${error.message}")
+                                        }
+                                    )
+                                }
+                            }
+                        },
+                        onGoogleSignInClick = {
+                            println("Google Sign-In clicked")
+                        },
+                        onSignUpClick = {
+                            navController.navigate(Screen.SignUp.route)
+                        },
+                        onFingerprintClick = {
+                            println("Fingerprint authentication clicked")
+                        }
+                    )
+                }
             }
             composable(Screen.SignUp.route) { SignupScreen(navController) }
             composable(Screen.ChatBot.route) { ChatBotScreen() }
             composable(Screen.Service.route) { ServiceScreen() }
             composable(Screen.Hotel.route) { HotelScreen() }
+            composable(Screen.MyPage.route) { MyPageScreen() }
         }
     }
 }
