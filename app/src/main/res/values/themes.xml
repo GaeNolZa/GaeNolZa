@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-    <style name="Theme.GaeNolZa" parent="android:Theme.Material.Light.NoActionBar" />
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Theme.GaeNolZa" parent="android:Theme.Material.Light.NoActionBar">
+        <!-- API 29 이상에서만 사용 가능한 속성 -->
+        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
+    </style>
 </resources>
