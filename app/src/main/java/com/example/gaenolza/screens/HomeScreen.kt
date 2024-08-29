@@ -61,7 +61,6 @@ import com.example.gaenolza.R
 
 @Composable
 fun HomeScreen(
-    navController: NavController,
     onCardClick: (Int) -> Unit
 ) {
     var showSearch by remember { mutableStateOf(false) }
@@ -75,7 +74,8 @@ fun HomeScreen(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = 80.dp)
         ) {
-            item { TopBar(onSearchClick = { showSearch = true }) }
+            //아이콘 다시 누르면 검색창 사라지도록 변경
+            item { TopBar(onSearchClick = { showSearch = !showSearch }) }
 
             if (showSearch) {
                 item { SearchBar() }
@@ -86,23 +86,6 @@ fun HomeScreen(
             item { IconButtonGrid() }
             item { VeterinarianSection(onVeterinarianClick = { /* TODO: Handle vet click */ }) }
         }
-
-//        FloatingActionButton(
-//            onClick = { navController.navigate("chatScreen") },
-//            shape = CircleShape,
-//            modifier = Modifier
-//                .align(Alignment.BottomEnd)
-//                .padding(16.dp)
-//                .shadow(elevation = 6.dp, shape = CircleShape),
-//            containerColor = Color(0xFFFF5BA0),
-//            contentColor = Color.White
-//        ) {
-//            Icon(
-//                painter = painterResource(id = R.drawable.ic_flat),
-//                contentDescription = "Add",
-//                modifier = Modifier.size(24.dp)
-//            )
-//        }
     }
 }
 
@@ -134,139 +117,33 @@ fun TopBar(onSearchClick: () -> Unit) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(2.dp)
                 ) {
-
+                    //각 글자들 함수화
                     Modifier
                         .width(31.dp)
                         .height(23.04055.dp)
-                    Text(
-
-                        text = "오",
-                        style = TextStyle(
-                            fontSize = 33.22.sp,
-                            lineHeight = 35.88.sp,
-                            fontFamily = FontFamily(Font(R.font.poppins_bold)),
-                            fontWeight = FontWeight(700),
-                            color = Color.White,
-                            shadow = Shadow(
-                                color = Color.Gray,
-                                offset = Offset(2f, 2f),
-                                blurRadius = 4f
-                            )
-
-                        )
-                    )
+                    TopBarChar(text = "오", fontSize = 33.22f, lineHeight = 35.88f)
                     Modifier
                         .width(18.dp)
                         .height(15.36037.dp)
-                    Text(
-                        text = "늘",
-                        style = TextStyle(
-                            fontSize = 18.98.sp,
-                            lineHeight = 24.3.sp,
-                            fontFamily = FontFamily(Font(R.font.poppins_bold)),
-                            fontWeight = FontWeight(700),
-                            color = Color.White,
-                            shadow = Shadow(
-                                color = Color.Gray,
-                                offset = Offset(2f, 2f),
-                                blurRadius = 4f
-                            )
-
-                        )
-                    )
-                    Text(
-                        text = "도",
-                        style = TextStyle(
-                            fontSize = 23.73.sp,
-                            lineHeight = 26.58.sp,
-                            fontFamily = FontFamily(Font(R.font.poppins_bold)),
-                            fontWeight = FontWeight(700),
-                            color = Color(0xFFFFFFFF),
-                            shadow = Shadow(
-                                color = Color.Gray,
-                                offset = Offset(2f, 2f),
-                                blurRadius = 4f
-                            )
-
-                        )
-                    )
-                }
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(2.dp)
-                ) {
+                    TopBarChar(text = "늘", fontSize = 18.98f, lineHeight = 24.3f)
+                    TopBarChar(text = "도", fontSize = 23.73f, lineHeight = 26.58f)
+                    Spacer(modifier = Modifier.size(10.dp))
                     Modifier
                         .width(40.dp)
                         .height(28.80069.dp)
-                    Text(
-                        text = "개",
-                        style = TextStyle(
-                            fontSize = 42.71.sp,
-                            lineHeight = 44.85.sp,
-                            fontFamily = FontFamily(Font(R.font.poppins_bold)),
-                            fontWeight = FontWeight(700),
-                            color = Color.White,
-                            shadow = Shadow(
-                                color = Color.Gray,
-                                offset = Offset(2f, 2f),
-                                blurRadius = 4f
-                            )
-                        )
-                    )
+                    TopBarChar(text = "개", fontSize = 42.71f, lineHeight = 44.85f)
                     Modifier
                         .width(31.dp)
                         .height(23.04055.dp)
-                    Text(
-                        text = "놀",
-                        style = TextStyle(
-                            fontSize = 33.22.sp,
-                            lineHeight = 35.88.sp,
-                            fontFamily = FontFamily(Font(R.font.poppins_bold)),
-                            fontWeight = FontWeight(700),
-                            color = Color.White,
-                            shadow = Shadow(
-                                color = Color.Gray,
-                                offset = Offset(2f, 2f),
-                                blurRadius = 4f
-                            )
-                        )
-                    )
+                    TopBarChar(text = "놀", fontSize = 33.22f, lineHeight = 35.88f)
                     Modifier
                         .width(31.dp)
                         .height(23.04055.dp)
-                    Text(
-                        text = "자",
-                        style = TextStyle(
-                            fontSize = 33.22.sp,
-                            lineHeight = 35.88.sp,
-                            fontFamily = FontFamily(Font(R.font.poppins_bold)),
-                            fontWeight = FontWeight(700),
-                            color = Color.White,
-                            shadow = Shadow(
-                                color = Color.Gray,
-                                offset = Offset(2f, 2f),
-                                blurRadius = 4f
-                            )
-                        )
-                    )
+                    TopBarChar(text = "자", fontSize = 33.22f, lineHeight = 35.88f)
                     Modifier
                         .width(14.dp)
                         .height(23.04055.dp)
-                    Text(
-                        text = "!",
-                        style = TextStyle(
-                            fontSize = 33.22.sp,
-                            lineHeight = 35.88.sp,
-                            fontFamily = FontFamily(Font(R.font.poppins_bold)),
-                            fontWeight = FontWeight(700),
-                            color = Color(0xFFFF5BA0),
-                            shadow = Shadow(
-                                color = Color.Gray,
-                                offset = Offset(2f, 2f),
-                                blurRadius = 4f
-                            )
-                        )
-                    )
+                    TopBarChar(text = "!", fontSize = 33.22f, lineHeight = 35.88f, color = Color(0xFFFF5BA0))
                 }
             }
 
@@ -277,7 +154,6 @@ fun TopBar(onSearchClick: () -> Unit) {
                     tint = Color(0xFFFF0099),
                     modifier = Modifier
                         .size(34.dp)
-
                 )
             }
         }
@@ -382,6 +258,31 @@ fun RecommendationCard(index: Int) {
     }
 }
 
+@Composable
+fun TopBarChar(
+    text: String,
+    fontSize: Float,
+    lineHeight: Float,
+    color: Color = Color.White
+) {
+    Text(
+        text = text,
+        style = TextStyle(
+            fontSize = fontSize.sp,
+            lineHeight = lineHeight.sp,
+            fontFamily = FontFamily(Font(R.font.poppins_bold)),
+            fontWeight = FontWeight(700),
+            color = color,
+            shadow = Shadow(
+                color = Color.Gray,
+                offset = Offset(2f, 2f),
+                blurRadius = 4f
+            )
+
+        )
+    )
+}
+
 //@Composable
 //fun PromotionCard(
 //    id: Int,
@@ -457,7 +358,6 @@ fun PromotionCardSection(onCardClick: (Int) -> Unit) {
             subtitle = "금방 사라져요",
             buttonText = "쿠폰받기 >",
             backgroundColor = Color(0xFFFFE8EC),
-            isTemporary = true,
             modifier = Modifier.weight(1f),
             onClick = onCardClick
         )
@@ -467,7 +367,6 @@ fun PromotionCardSection(onCardClick: (Int) -> Unit) {
             subtitle = "안사라져요",
             buttonText = "쿠폰받기 >",
             backgroundColor = Color(0xFFE8F4FF),
-            isTemporary = false,
             modifier = Modifier.weight(1f),
             onClick = onCardClick
         )
@@ -481,9 +380,9 @@ fun PromotionCard(
     subtitle: String,
     buttonText: String,
     backgroundColor: Color,
-    isTemporary: Boolean,
     modifier: Modifier = Modifier,
     onClick: (Int) -> Unit
+    //안쓰는 변수 삭제
 ) {
     Box(
         modifier = modifier
@@ -517,7 +416,8 @@ fun PromotionCard(
                 text = title,
                 style = TextStyle(
                     fontFamily = FontFamily(Font(R.font.poppins_bold)),
-                    fontSize = 36.sp,
+                    //내 폰(갤럭시22+)에서 짤려서 fontSize 수정 36->32
+                    fontSize = 32.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF33383F)
                 )

@@ -180,7 +180,6 @@ fun GaeNolZaMain() {
         ) {
             composable(Screen.Main.route) {
                 HomeScreen(
-                    navController = navController,
                     onCardClick = { cardId ->
                         println("Card clicked: $cardId")
                     }
@@ -191,7 +190,8 @@ fun GaeNolZaMain() {
                     navController.navigate(Screen.MyPage.route) // 로그인 상태일 경우 MyPage로 이동
                 } else {
                     LoginScreen(
-                        onLoginClick = { _, email, password ->
+                        //안쓰는 변수 삭제
+                        onLoginClick = { email, password ->
                             CoroutineScope(Dispatchers.IO).launch {
                                 sendLoginData(
                                     email = email,

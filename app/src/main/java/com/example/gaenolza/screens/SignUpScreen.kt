@@ -76,8 +76,8 @@ fun SignupScreen(navController: NavController) {
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth()
         )
-
-        Text("반려동물 정보", style = MaterialTheme.typography.titleMedium)
+//        사용하지 않는 컴포저블
+//        Text("반려동물 정보", style = MaterialTheme.typography.titleMedium)
 
         Row(
             modifier = Modifier.fillMaxWidth(),
