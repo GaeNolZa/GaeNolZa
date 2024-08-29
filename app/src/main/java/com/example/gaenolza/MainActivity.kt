@@ -201,7 +201,17 @@ fun GaeNolZaMain() {
             composable(Screen.ChatBot.route) { ChatBotScreen() }
             composable(Screen.Service.route) { ServiceScreen() }
             composable(Screen.Hotel.route) { HotelScreen() }
-            composable(Screen.MyPage.route) { MyPageScreen() }
+            composable(Screen.MyPage.route) {
+                MyPageScreen(
+                    onLogoutClick = {
+                        isLoggedIn = false
+                        navController.navigate(Screen.Main.route) {
+                            popUpTo(Screen.MyPage.route) { inclusive = true }
+                            // MyPage 화면도 스택에서 제거하고 Main으로 이동
+                        }
+                    }
+                )
+            }
         }
     }
 }
