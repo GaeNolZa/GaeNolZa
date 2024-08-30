@@ -58,7 +58,11 @@ fun DayCell(
                     )
                     .then(
                         if (isCurrentDay && !isSelected)
-                            Modifier.border(1.dp, ColorPalette.primaryPink, RoundedCornerShape(4.dp))
+                            Modifier.border(
+                                1.dp,
+                                ColorPalette.primaryPink,
+                                RoundedCornerShape(4.dp)
+                            )
                         else
                             Modifier
                     ),

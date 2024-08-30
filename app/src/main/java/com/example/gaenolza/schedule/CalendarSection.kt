@@ -211,6 +211,7 @@ fun EventList(date: LocalDate) {
                 CircularProgressIndicator()
             }
         }
+
         error != null -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -219,6 +220,7 @@ fun EventList(date: LocalDate) {
                 Text("Error: $error", color = Color.Red)
             }
         }
+
         events.isEmpty() -> {
             Box(
                 modifier = Modifier
@@ -229,6 +231,7 @@ fun EventList(date: LocalDate) {
                 Text("No events for this date", color = Color.Gray)
             }
         }
+
         else -> {
             LazyColumn {
                 items(events) { event ->

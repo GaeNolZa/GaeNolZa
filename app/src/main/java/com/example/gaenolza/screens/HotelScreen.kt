@@ -9,6 +9,10 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,13 +28,16 @@ import com.example.gaenolza.ui.theme.ColorPalette
 
 
 @Composable
-fun HotelScreen(navController: NavController,
-                dummyHotels: List<Hotel>) {
+fun HotelScreen(
+    navController: NavController,
+    hotels: List<Hotel> // dummyHotels 대신 hotels로 변경
+) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        contentPadding = PaddingValues(16.dp)
+
     ) {
+
         item {
             Text(
                 "추천 호텔",
@@ -41,7 +48,7 @@ fun HotelScreen(navController: NavController,
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(dummyHotels.take(3)) { hotel ->
+                items(hotels.take(3)) { hotel -> // hotels 리스트에서 상위 3개 항목 사용
                     FeaturedHotelCard(hotel, onHotelClick = {
                         navController.navigate("hotelDetail/${hotel.id}")
                     })
@@ -59,7 +66,7 @@ fun HotelScreen(navController: NavController,
             Spacer(modifier = Modifier.height(8.dp))
         }
 
-        items(dummyHotels) { hotel ->
+        items(hotels) { hotel -> // hotels 리스트 사용
             HotelCard(hotel, onHotelClick = {
                 navController.navigate("hotelDetail/${hotel.id}")
             })
@@ -150,11 +157,16 @@ fun HotelCard(hotel: Hotel, onHotelClick: () -> Unit) {
             ) {
                 Text(hotel.name, style = MaterialTheme.typography.titleMedium)
                 Spacer(modifier = Modifier.height(4.dp))
-                Row(modifier = Modifier.wrapContentWidth(),
-                    verticalAlignment = Alignment.Bottom) {
+                Row(
+                    modifier = Modifier.wrapContentWidth(),
+                    verticalAlignment = Alignment.Bottom
+                ) {
                     HotelStar(hotel)
-                    Text("(${hotel.reviewCount})", style = TextStyle(fontSize = 14.sp, color = Color.Black),
-                        modifier = Modifier.padding(start = 4.dp))
+                    Text(
+                        "(${hotel.reviewCount})",
+                        style = TextStyle(fontSize = 14.sp, color = Color.Black),
+                        modifier = Modifier.padding(start = 4.dp)
+                    )
                 }
             }
             Text(
@@ -167,15 +179,19 @@ fun HotelCard(hotel: Hotel, onHotelClick: () -> Unit) {
 }
 
 @Composable
-fun HotelStar(hotel: Hotel,
-              fontSize: Int = 14,
-              color: Color = Color.Black) {
+fun HotelStar(
+    hotel: Hotel,
+    fontSize: Int = 14,
+    color: Color = Color.Black
+) {
     Row(
         modifier = Modifier.wrapContentWidth(),
         verticalAlignment = Alignment.Bottom
     ) {
-        Text("★", style = TextStyle(fontSize = fontSize.sp, color = ColorPalette.primaryPink),
-            modifier = Modifier.padding(end = 2.dp))
+        Text(
+            "★", style = TextStyle(fontSize = fontSize.sp, color = ColorPalette.primaryPink),
+            modifier = Modifier.padding(end = 2.dp)
+        )
         Text("${hotel.rating}", style = TextStyle(fontSize = fontSize.sp, color = color))
     }
 }

@@ -26,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -46,6 +47,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.gaenolza.network.sendGetFacilities
 import com.example.gaenolza.network.sendLoginData
 import com.example.gaenolza.schedule.ScheduleMainScreen
 import com.example.gaenolza.screens.AnimalRegisterScreen
@@ -56,6 +58,7 @@ import com.example.gaenolza.screens.LoginScreen
 import com.example.gaenolza.screens.MyPageScreen
 import com.example.gaenolza.screens.ServiceScreen
 import com.example.gaenolza.screens.SignupScreen
+import com.example.gaenolza.screens.TopBar
 import com.example.gaenolza.screens.chatbot.ChatBotScreen
 import com.example.gaenolza.ui.theme.GaeNolZaTheme
 import com.example.gaenolza.viewmodel.ProfileViewModel
@@ -119,17 +122,36 @@ fun GaeNolZaMain(profileViewModel: ProfileViewModel) {
     val items = listOf(Screen.Main, Screen.Hotel, Screen.Service, Screen.Profile)
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = currentBackStackEntry?.destination?.route
+    var showSearch by remember { mutableStateOf(false) }
 
-    val dummyHotels = remember {
-        listOf(
-            Hotel(1, "개랜드 호텔", 4.5f, 1234, 150000, R.drawable.hotel1),
-            Hotel(2, "시티 독 호텔", 4.2f, 867, 120000, R.drawable.hotel2),
-            Hotel(3, "오션 파라도기스", 4.7f, 2345, 200000, R.drawable.hotel3)
-        )
+    var hotels by remember { mutableStateOf<List<Hotel>>(emptyList()) }
+
+    LaunchedEffect(Unit) {
+        sendGetFacilities { result ->
+            result.fold(
+                onSuccess = { facilities ->
+                    // Facility 데이터를 Hotel로 변환하여 hotels 리스트에 저장
+                    hotels = facilities.map { facility ->
+                        Hotel(
+                            id = facility.facilityId,
+                            name = facility.facilityName,
+                            rating = facility.rating,
+                            reviewCount = facility.reviewCount,
+                            price = (100000..200000).random(), // 가격은 임의로 설정
+                            imageResId = R.drawable.ic_hotel // 이미지 리소스는 고정값이나 로직에 따라 변경 가능
+                        )
+                    }
+                },
+                onFailure = { error ->
+                    println("Error fetching facilities: ${error.message}")
+                }
+            )
+        }
     }
 
     Scaffold(
         modifier = Modifier.padding(bottom = 30.dp),
+        { TopBar(onSearchClick = { showSearch = !showSearch },showSearch = showSearch) },
         bottomBar = {
             Box(
                 modifier = Modifier
@@ -145,6 +167,7 @@ fun GaeNolZaMain(profileViewModel: ProfileViewModel) {
                     barColor = Color(0xFF393939),
                     ballColor = Color(0xFFFF5BA0)
                 ) {
+
                     items.forEachIndexed { index, screen ->
                         Box(
                             modifier = Modifier
@@ -215,8 +238,8 @@ fun GaeNolZaMain(profileViewModel: ProfileViewModel) {
                     onCardClick = { cardId ->
                         println("Card clicked: $cardId")
                     },
-                    dummyHotels,
-                    navController
+                    hotels = hotels, // hotels 리스트를 HomeScreen에 전달
+                    navController = navController
                 )
             }
             composable(Screen.Profile.route) {
@@ -269,7 +292,7 @@ fun GaeNolZaMain(profileViewModel: ProfileViewModel) {
             composable(Screen.Hotel.route) {
                 HotelScreen(
                     navController = navController,
-                    dummyHotels
+                    hotels
                 )
             }
             composable(
@@ -277,7 +300,7 @@ fun GaeNolZaMain(profileViewModel: ProfileViewModel) {
                 arguments = listOf(navArgument("hotelId") { type = NavType.IntType })
             ) { backStackEntry ->
                 val hotelId = backStackEntry.arguments?.getInt("hotelId") ?: return@composable
-                HotelDetailScreen(navController = navController, hotelId = hotelId, dummyHotels)
+                HotelDetailScreen(navController = navController, hotelId = hotelId, hotels = hotels)
             }
             composable(Screen.MyPage.route) {
                 MyPageScreen(

@@ -22,15 +22,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -42,10 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -60,15 +54,15 @@ import androidx.navigation.NavController
 import com.example.gaenolza.Hotel
 import com.example.gaenolza.R
 import com.example.gaenolza.screens.HotelStar
-import com.example.gaenolza.ui.theme.ColorPalette
+import com.example.gaenolza.screens.TopBar
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     onCardClick: (Int) -> Unit,
-    dummyHotel: List<Hotel>,
+    hotels: List<Hotel>,
     navController: NavController
 ) {
-    var showSearch by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -80,14 +74,14 @@ fun HomeScreen(
             contentPadding = PaddingValues(bottom = 80.dp)
         ) {
             //아이콘 다시 누르면 검색창 사라지도록 변경
-            item { TopBar(onSearchClick = { showSearch = !showSearch }) }
 
-            if (showSearch) {
-                item { SearchBar() }
+
+            item {
+                RecommendationSection(
+                    onMoreClick = { /* TODO: Handle more click */ },
+                    hotels, navController
+                )
             }
-
-            item { RecommendationSection(onMoreClick = { /* TODO: Handle more click */ },
-                dummyHotel, navController) }
             item { PromotionCardSection(onCardClick = onCardClick) }
             item { IconButtonGrid() }
             item { VeterinarianSection(onVeterinarianClick = { /* TODO: Handle vet click */ }) }
@@ -96,100 +90,11 @@ fun HomeScreen(
 }
 
 @Composable
-fun TopBar(onSearchClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(100.dp)
-            .background(
-                brush = Brush.horizontalGradient(
-                    colors = listOf(Color(0xFFFF5BA0), Color(0xFFFFEEF5))
-                )
-            )
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(2.dp)
-                ) {
-                    //각 글자들 함수화
-                    Modifier
-                        .width(31.dp)
-                        .height(23.04055.dp)
-                    TopBarChar(text = "오", fontSize = 33.22f, lineHeight = 35.88f)
-                    Modifier
-                        .width(18.dp)
-                        .height(15.36037.dp)
-                    TopBarChar(text = "늘", fontSize = 18.98f, lineHeight = 24.3f)
-                    TopBarChar(text = "도", fontSize = 23.73f, lineHeight = 26.58f)
-                    Spacer(modifier = Modifier.size(10.dp))
-                    Modifier
-                        .width(40.dp)
-                        .height(28.80069.dp)
-                    TopBarChar(text = "개", fontSize = 42.71f, lineHeight = 44.85f)
-                    Modifier
-                        .width(31.dp)
-                        .height(23.04055.dp)
-                    TopBarChar(text = "놀", fontSize = 33.22f, lineHeight = 35.88f)
-                    Modifier
-                        .width(31.dp)
-                        .height(23.04055.dp)
-                    TopBarChar(text = "자", fontSize = 33.22f, lineHeight = 35.88f)
-                    Modifier
-                        .width(14.dp)
-                        .height(23.04055.dp)
-                    TopBarChar(text = "!", fontSize = 33.22f, lineHeight = 35.88f, color = Color(0xFFFF5BA0))
-                }
-            }
-
-            IconButton(onClick = onSearchClick) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_search),
-                    contentDescription = "Search",
-                    tint = Color(0xFFFF0099),
-                    modifier = Modifier
-                        .size(34.dp)
-                )
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SearchBar() {
-    var query by remember { mutableStateOf("") }
-    SearchBar(
-        query = query,
-        onQueryChange = { query = it },
-        onSearch = { /* TODO: Handle search */ },
-        active = false,
-        onActiveChange = { },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        placeholder = { Text("검색어를 입력하세요") },
-        leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search") }
-    ) {
-        // 검색 제안 내용
-    }
-}
-
-@Composable
-fun RecommendationSection(onMoreClick: () -> Unit,
-                          dummyHotel: List<Hotel>,
-                          navController: NavController) {
+fun RecommendationSection(
+    onMoreClick: () -> Unit,
+    hotels: List<Hotel>,
+    navController: NavController
+) {
     Column(modifier = Modifier.padding(8.dp)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -222,23 +127,27 @@ fun RecommendationSection(onMoreClick: () -> Unit,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(end = 16.dp)
         ) {
-            items(3) { index ->
-                RecommendationCard(dummyHotel[index],
-                    onRecommendCardTap = { navController.navigate("hotelDetail/${dummyHotel[index].id}") })
+            items(hotels.size) { index ->
+                RecommendationCard(
+                    hotelData = hotels[index],
+                    onRecommendCardTap = { navController.navigate("hotelDetail/${hotels[index].id}") }
+                )
             }
         }
     }
 }
 
 @Composable
-fun RecommendationCard(hotelData: Hotel,
-                       onRecommendCardTap: () -> Unit) {
+fun RecommendationCard(
+    hotelData: Hotel,
+    onRecommendCardTap: () -> Unit
+) {
     Card(
         modifier = Modifier
             .width(150.dp)
             .height(180.dp)
             .shadow(4.dp, RoundedCornerShape(8.dp))
-            .pointerInput(Unit){
+            .pointerInput(Unit) {
                 detectTapGestures { onRecommendCardTap() }
             },
         shape = RoundedCornerShape(8.dp),
@@ -255,9 +164,11 @@ fun RecommendationCard(hotelData: Hotel,
                     .background(Color.White)
                     .padding(bottom = 16.dp)
             ) {
-                Image(painter = painterResource(id = hotelData.imageResId),
+                Image(
+                    painter = painterResource(id = hotelData.imageResId),
                     contentDescription = "",
-                    contentScale = ContentScale.Crop)
+                    contentScale = ContentScale.Crop
+                )
             }
             Column(
                 modifier = Modifier.padding(8.dp)
@@ -266,8 +177,10 @@ fun RecommendationCard(hotelData: Hotel,
                     hotelData.name,
                     style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Bold)
                 )
-                Row(modifier = Modifier.wrapContentWidth(),
-                    verticalAlignment = Alignment.Bottom) {
+                Row(
+                    modifier = Modifier.wrapContentWidth(),
+                    verticalAlignment = Alignment.Bottom
+                ) {
                     HotelStar(hotelData)
                     Spacer(modifier = Modifier.size(4.dp))
                     Text(
@@ -278,31 +191,6 @@ fun RecommendationCard(hotelData: Hotel,
             }
         }
     }
-}
-
-@Composable
-fun TopBarChar(
-    text: String,
-    fontSize: Float,
-    lineHeight: Float,
-    color: Color = Color.White
-) {
-    Text(
-        text = text,
-        style = TextStyle(
-            fontSize = fontSize.sp,
-            lineHeight = lineHeight.sp,
-            fontFamily = FontFamily(Font(R.font.poppins_bold)),
-            fontWeight = FontWeight(700),
-            color = color,
-            shadow = Shadow(
-                color = Color.Gray,
-                offset = Offset(2f, 2f),
-                blurRadius = 4f
-            )
-
-        )
-    )
 }
 
 //@Composable
@@ -589,7 +477,18 @@ fun VeterinarianCard(id: Int, name: String, description: String, onClick: (Int) 
                 modifier = Modifier
                     .width(120.dp)
                     .fillMaxHeight(),
-                )
+            )
         }
     }
 }
+
+data class Facility(
+    val facilityId: Int,
+    val address: String,
+    val facilityName: String,
+    val facilityContact: String,
+    val ownedFacility: String,
+    val rating: Float,
+    val reviewCount: Int,
+    val numberOfRooms: Int
+)

@@ -30,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.gaenolza.R
+import com.example.gaenolza.viewmodel.AnimalData
 import com.example.gaenolza.viewmodel.ProfileViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,6 +52,7 @@ fun DogScreen(
                 }
             )
         }
+
     ) { paddingValues ->
         Column(
             modifier = Modifier
