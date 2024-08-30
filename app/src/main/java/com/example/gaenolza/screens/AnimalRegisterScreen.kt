@@ -18,9 +18,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.example.gaenolza.Screen
+import com.example.gaenolza.network.sendAnimalData
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 @Composable
 fun AnimalRegisterScreen(
+    navController: NavController
 ) {
     val scrollState = rememberScrollState()
     Column(
@@ -35,7 +43,7 @@ fun AnimalRegisterScreen(
         var animalID by remember { mutableStateOf("") }
         OutlinedTextField(
             value = animalID,
-            onValueChange = { animalID= it },
+            onValueChange = { animalID = it },
             label = { Text("동물ID") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -71,8 +79,31 @@ fun AnimalRegisterScreen(
             label = { Text("동물성별") },
             modifier = Modifier.fillMaxWidth()
         )
-        
-        Button(onClick = { /*TODO*/ }) {
+
+        Button(onClick = {
+            CoroutineScope(Dispatchers.IO).launch {
+                sendAnimalData(
+                    customerId = userID.toInt(),
+                    animalName = animalID,
+                    animalSpecies = animalType,
+                    animalBirthdate = LocalDate.parse(animalBirth),
+                    gender = animalGender,
+                ) { result ->
+                    result.fold(
+                        onSuccess = { responseData ->
+                            println("Registration successful: $responseData")
+                            CoroutineScope(Dispatchers.Main).launch {
+                                navController.navigate(Screen.MyPage.route)
+                            }
+
+                        },
+                        onFailure = { error ->
+                            println("Registration failed: ${error.message}")
+                        }
+                    )
+                }
+            }
+        }) {
             Text(text = "등록")
         }
     }

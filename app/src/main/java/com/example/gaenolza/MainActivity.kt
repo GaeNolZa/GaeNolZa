@@ -169,7 +169,7 @@ fun GaeNolZaMain() {
                     onClick = { navController.navigate("chatScreen") },
                     shape = CircleShape,
                     modifier = Modifier.Companion
-    //                    .align(Alignment.BottomEnd)
+                        //                    .align(Alignment.BottomEnd)
                         .padding(16.dp)
                         .size(72.dp),
                 ) {
@@ -261,7 +261,7 @@ fun GaeNolZaMain() {
                     }
                 )
             }
-            composable(Screen.AnimalRegister.route) { AnimalRegisterScreen() }
+            composable(Screen.AnimalRegister.route) { AnimalRegisterScreen(navController) }
             composable(Screen.Schedule.route) { ScheduleMainScreen() }
         }
     }
