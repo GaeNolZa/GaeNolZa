@@ -64,7 +64,7 @@ fun HomeScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color(0xFFFEEF5))
+            .background(color = Color(0xFFFFEEF5))
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
