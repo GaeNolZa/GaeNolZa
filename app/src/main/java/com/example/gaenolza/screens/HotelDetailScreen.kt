@@ -22,9 +22,10 @@ import com.example.gaenolza.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HotelDetailScreen(navController: NavController, hotelId: Int, dummyHotels: List<Hotel>) {
+fun HotelDetailScreen(navController: NavController, hotelId: Int, hotels: List<Hotel>) {
 
-    val hotel = dummyHotels.find { it.id == hotelId } ?: return
+    // hotels 리스트에서 hotelId에 해당하는 호텔을 찾습니다.
+    val hotel = hotels.find { it.id == hotelId } ?: return
 
     Scaffold(
         topBar = {
@@ -72,7 +73,11 @@ fun HotelDetailScreen(navController: NavController, hotelId: Int, dummyHotels: L
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Text("호텔 설명", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                Text(
+                    "호텔 설명",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text("이 호텔에 대한 자세한 설명을 여기에 추가하세요. 위치, 편의시설, 서비스 등의 정보를 포함할 수 있습니다.")
 
