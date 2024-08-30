@@ -1,6 +1,7 @@
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
@@ -44,6 +46,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -53,18 +56,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.example.gaenolza.Hotel
 import com.example.gaenolza.R
+import com.example.gaenolza.screens.HotelStar
+import com.example.gaenolza.ui.theme.ColorPalette
 
 @Composable
 fun HomeScreen(
-    onCardClick: (Int) -> Unit
+    onCardClick: (Int) -> Unit,
+    dummyHotel: List<Hotel>,
+    navController: NavController
 ) {
     var showSearch by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color(0xFFFFEEF5))
+            .background(color = Color.White)
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -77,7 +86,8 @@ fun HomeScreen(
                 item { SearchBar() }
             }
 
-            item { RecommendationSection(onMoreClick = { /* TODO: Handle more click */ }) }
+            item { RecommendationSection(onMoreClick = { /* TODO: Handle more click */ },
+                dummyHotel, navController) }
             item { PromotionCardSection(onCardClick = onCardClick) }
             item { IconButtonGrid() }
             item { VeterinarianSection(onVeterinarianClick = { /* TODO: Handle vet click */ }) }
@@ -177,7 +187,9 @@ fun SearchBar() {
 }
 
 @Composable
-fun RecommendationSection(onMoreClick: () -> Unit) {
+fun RecommendationSection(onMoreClick: () -> Unit,
+                          dummyHotel: List<Hotel>,
+                          navController: NavController) {
     Column(modifier = Modifier.padding(8.dp)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -211,44 +223,58 @@ fun RecommendationSection(onMoreClick: () -> Unit) {
             contentPadding = PaddingValues(end = 16.dp)
         ) {
             items(3) { index ->
-                RecommendationCard(index)
+                RecommendationCard(dummyHotel[index],
+                    onRecommendCardTap = { navController.navigate("hotelDetail/${dummyHotel[index].id}") })
             }
         }
     }
 }
 
 @Composable
-fun RecommendationCard(index: Int) {
+fun RecommendationCard(hotelData: Hotel,
+                       onRecommendCardTap: () -> Unit) {
     Card(
         modifier = Modifier
             .width(150.dp)
-            .height(200.dp)
-            .shadow(4.dp, RoundedCornerShape(8.dp)),
+            .height(180.dp)
+            .shadow(4.dp, RoundedCornerShape(8.dp))
+            .pointerInput(Unit){
+                detectTapGestures { onRecommendCardTap() }
+            },
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(Color.White)
     ) {
         Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxSize()
         ) {
             // 이미지 영역 (실제 앱에서는 이미지를 로드해야 합니다)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(120.dp)
-                    .background(Color.LightGray)
-            )
+                    .background(Color.White)
+                    .padding(bottom = 16.dp)
+            ) {
+                Image(painter = painterResource(id = hotelData.imageResId),
+                    contentDescription = "",
+                    contentScale = ContentScale.Crop)
+            }
             Column(
                 modifier = Modifier.padding(8.dp)
             ) {
                 Text(
-                    "추천 ${index + 1}",
+                    hotelData.name,
                     style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Bold)
                 )
-                Text(
-                    "추천 설명 텍스트",
-                    style = TextStyle(fontSize = 14.sp, color = Color.Gray)
-                )
+                Row(modifier = Modifier.wrapContentWidth(),
+                    verticalAlignment = Alignment.Bottom) {
+                    HotelStar(hotelData)
+                    Spacer(modifier = Modifier.size(4.dp))
+                    Text(
+                        "(${hotelData.reviewCount})",
+                        style = TextStyle(fontSize = 14.sp, color = Color.Gray)
+                    )
+                }
             }
         }
     }
@@ -563,7 +589,6 @@ fun VeterinarianCard(id: Int, name: String, description: String, onClick: (Int) 
                 modifier = Modifier
                     .width(120.dp)
                     .fillMaxHeight(),
-
                 )
         }
     }

@@ -9,36 +9,23 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.gaenolza.R
+import com.example.gaenolza.Hotel
+import com.example.gaenolza.ui.theme.ColorPalette
 
-data class Hotel(
-    val id: Int,
-    val name: String,
-    val rating: Float,
-    val reviewCount: Int,
-    val price: Int,
-    val imageResId: Int
-)
 
 @Composable
-fun HotelScreen(navController: NavController) {
-    val dummyHotels = remember {
-        listOf(
-            Hotel(1, "개랜드 호텔", 4.5f, 1234, 150000, R.drawable.hotel1),
-            Hotel(2, "시티 독 호텔", 4.2f, 867, 120000, R.drawable.hotel2),
-            Hotel(3, "오션 파라도기스", 4.7f, 2345, 200000, R.drawable.hotel3)
-        )
-    }
-
+fun HotelScreen(navController: NavController,
+                dummyHotels: List<Hotel>) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -117,10 +104,10 @@ fun FeaturedHotelCard(hotel: Hotel, onHotelClick: () -> Unit) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.Bottom
                 ) {
-                    Column {
-                        Text("★ ${hotel.rating}", color = Color.White)
+                    Column{
+                        HotelStar(hotel, color = Color.White)
                         Text("리뷰 ${hotel.reviewCount}개", color = Color.White)
                     }
                     Text(
@@ -163,7 +150,12 @@ fun HotelCard(hotel: Hotel, onHotelClick: () -> Unit) {
             ) {
                 Text(hotel.name, style = MaterialTheme.typography.titleMedium)
                 Spacer(modifier = Modifier.height(4.dp))
-                Text("★ ${hotel.rating} (${hotel.reviewCount})")
+                Row(modifier = Modifier.wrapContentWidth(),
+                    verticalAlignment = Alignment.Bottom) {
+                    HotelStar(hotel)
+                    Text("(${hotel.reviewCount})", style = TextStyle(fontSize = 14.sp, color = Color.Black),
+                        modifier = Modifier.padding(start = 4.dp))
+                }
             }
             Text(
                 "₩${hotel.price}",
@@ -171,5 +163,19 @@ fun HotelCard(hotel: Hotel, onHotelClick: () -> Unit) {
                 fontWeight = FontWeight.Bold
             )
         }
+    }
+}
+
+@Composable
+fun HotelStar(hotel: Hotel,
+              fontSize: Int = 14,
+              color: Color = Color.Black) {
+    Row(
+        modifier = Modifier.wrapContentWidth(),
+        verticalAlignment = Alignment.Bottom
+    ) {
+        Text("★", style = TextStyle(fontSize = fontSize.sp, color = ColorPalette.primaryPink),
+            modifier = Modifier.padding(end = 2.dp))
+        Text("${hotel.rating}", style = TextStyle(fontSize = fontSize.sp, color = color))
     }
 }

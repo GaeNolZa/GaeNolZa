@@ -16,19 +16,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.gaenolza.Hotel
 import com.example.gaenolza.R
 import com.example.gaenolza.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HotelDetailScreen(navController: NavController, hotelId: Int) {
-    val dummyHotels = remember {
-        listOf(
-            Hotel(1, "개랜드 호텔", 4.5f, 1234, 150000, R.drawable.hotel1),
-            Hotel(2, "시티 독 호텔", 4.2f, 867, 120000, R.drawable.hotel2),
-            Hotel(3, "오션 파라도기스", 4.7f, 2345, 200000, R.drawable.hotel3)
-        )
-    }
+fun HotelDetailScreen(navController: NavController, hotelId: Int, dummyHotels: List<Hotel>) {
 
     val hotel = dummyHotels.find { it.id == hotelId } ?: return
 
@@ -66,8 +60,8 @@ fun HotelDetailScreen(navController: NavController, hotelId: Int) {
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("★ ${hotel.rating}", style = MaterialTheme.typography.bodyLarge)
+                Row(verticalAlignment = Alignment.Bottom) {
+                    HotelStar(hotel, fontSize = 18)
                     Spacer(modifier = Modifier.width(8.dp))
                     Text("(${hotel.reviewCount} 리뷰)", style = MaterialTheme.typography.bodyMedium)
                 }
