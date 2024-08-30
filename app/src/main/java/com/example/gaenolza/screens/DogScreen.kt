@@ -30,26 +30,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.gaenolza.R
+import com.example.gaenolza.viewmodel.AnimalData
 import com.example.gaenolza.viewmodel.ProfileViewModel
-import java.time.LocalDate
-
-data class SimpleDogInfo(
-    val id: String,
-    val name: String,
-    val species: String,
-    val birthDate: LocalDate,
-    val gender: String,
-    val imageResId: Int
-)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DogScreen(profileViewModel: ProfileViewModel,
-              navController: NavController) {
+fun DogScreen(
+    profileViewModel: ProfileViewModel,
+    navController: NavController,
+    dogID: Int
+) {
+    val dogInfo = profileViewModel.getAnimalInfoByID(dogID)!!
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(profileViewModel.getAnimalInfo(1).animalName) },
+                title = { Text(dogInfo.animalName) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
@@ -75,11 +70,11 @@ fun DogScreen(profileViewModel: ProfileViewModel,
                 contentScale = ContentScale.Crop
             )
             Spacer(modifier = Modifier.height(16.dp))
-            InfoCard("종류", profileViewModel.getAnimalInfo(1).animalSpecies)
+            InfoCard("종류", dogInfo.animalSpecies)
             Spacer(modifier = Modifier.height(8.dp))
-            InfoCard("생일", profileViewModel.getAnimalInfo(1).animalBirthdate.toString())
+            InfoCard("생일", dogInfo.animalBirthdate.toString())
             Spacer(modifier = Modifier.height(8.dp))
-            InfoCard("성별", profileViewModel.getAnimalInfo(1).gender)
+            InfoCard("성별", dogInfo.gender)
         }
     }
 }

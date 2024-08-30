@@ -88,18 +88,21 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-sealed class Screen(val route: String, val iconResourceId: Int?) {
+sealed class Screen(
+    val route: String,
+    val iconResourceId: Int? = null //초기 생성자 지정으로 함수 단순화
+) {
     data object Main : Screen("main", R.drawable.ic_home_renew)
     data object Hotel : Screen("hotel", R.drawable.ic_hotel)
     data object Service : Screen("service", R.drawable.ic_service)
     data object Profile : Screen("profile", R.drawable.ic_profile)
-    data object SignUp : Screen("signup", null)
-    data object ChatBot : Screen("chatScreen", null)
-    data object MyPage : Screen("myPage", null)
-    data object AnimalRegister : Screen("animalRegister", null)
-    data object Schedule : Screen("schedule", null)
-    data object HotelDetail : Screen("hotelDetail/{hotelId}", null)
-    data object DogScr : Screen("dog", null)
+    data object SignUp : Screen("signup")
+    data object ChatBot : Screen("chatScreen")
+    data object MyPage : Screen("myPage")
+    data object AnimalRegister : Screen("animalRegister")
+    data object Schedule : Screen("schedule")
+    data object HotelDetail : Screen("hotelDetail/{hotelId}")
+    data object DogScr : Screen("dog/{dogID}")
 }
 
 data class Hotel(
@@ -314,10 +317,17 @@ fun GaeNolZaMain(profileViewModel: ProfileViewModel) {
             }
             composable(Screen.AnimalRegister.route) { AnimalRegisterScreen(navController) }
             composable(Screen.Schedule.route) { ScheduleMainScreen() }
-            composable(Screen.DogScr.route) { DogScreen(profileViewModel, navController) }
+            composable(
+                Screen.DogScr.route,
+                arguments = listOf(navArgument("dogID") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val dogId = backStackEntry.arguments?.getInt("dogID") ?: 0
+                DogScreen(profileViewModel, navController, dogId)
+            }
         }
     }
 }
+
 
 //@Preview(showBackground = true)
 //@Composable

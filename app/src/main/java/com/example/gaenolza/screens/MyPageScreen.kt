@@ -20,10 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -40,9 +36,7 @@ import androidx.navigation.NavController
 import com.example.gaenolza.R
 import com.example.gaenolza.network.sendGetAnimalsByCustomerId
 import com.example.gaenolza.ui.theme.ColorPalette
-import com.example.gaenolza.viewmodel.AnimalData
 import com.example.gaenolza.viewmodel.ProfileViewModel
-import java.time.LocalDate
 
 @Composable
 fun MyPageScreen(
@@ -111,7 +105,7 @@ fun DogsList(
     ) {
         // Render DogProfile for each animal
         profileViewModel.animalDataState.collectAsState().value.forEach { animal ->
-            DogProfile(navController, name = animal.animalName)
+            DogProfile(navController, name = animal.animalName, dogID = animal.animalId)
         }
 
         // Add an additional DogProfile for adding a new pet
@@ -123,6 +117,7 @@ fun DogsList(
 fun DogProfile(
     navController: NavController,
     name: String = "애완동물 추가",
+    dogID: Int = 0,
     imageRes: Int = R.drawable.ic_add
 ) {
     Column(
@@ -146,8 +141,9 @@ fun DogProfile(
                 }
                 .pointerInput(Unit) {
                     detectTapGestures {
-                        if (name == "애완동물 추가") {navController.navigate("animalRegister")
-                        } else navController.navigate("dog")
+                        if (name == "애완동물 추가") {
+                            navController.navigate("animalRegister")
+                        } else navController.navigate("dog/$dogID")
                     }
                 }
         ) {
