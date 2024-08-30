@@ -21,15 +21,19 @@ data class AnimalData(
 )
 
 class ProfileViewModel : ViewModel() {
-    val profileDataState = MutableStateFlow<ProfileData>(ProfileData("","","",0))
+    val profileDataState = MutableStateFlow<ProfileData>(ProfileData("", "", "", 0))
     val animalDataState = MutableStateFlow<List<AnimalData>>(emptyList())
 
-    fun updateAnimalDataState(updateList: List<AnimalData>){
+    fun updateAnimalDataState(updateList: List<AnimalData>) {
         animalDataState.value = updateList
     }
 
-    fun getAnimalInfo(index: Int) : AnimalData {
-        return animalDataState.value[index]
+    fun getAnimalInfo(): List<AnimalData> {
+        return animalDataState.value
+    }
+
+    fun getAnimalInfoByID(dogID: Int): AnimalData? {
+        return animalDataState.value.find { it.animalId == dogID }
     }
 
 
