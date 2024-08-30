@@ -47,6 +47,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.gaenolza.network.sendLoginData
+import com.example.gaenolza.screens.AnimalRegisterScreen
 import com.example.gaenolza.schedule.ScheduleMainScreen
 import com.example.gaenolza.screens.HotelDetailScreen
 import com.example.gaenolza.screens.HotelScreen
@@ -89,6 +90,7 @@ sealed class Screen(val route: String, val iconResourceId: Int?) {
     data object SignUp : Screen("signup", null)
     data object ChatBot : Screen("chatScreen", null)
     data object MyPage : Screen("myPage", null)
+    data object AnimalRegister : Screen("animalRegister", null)
     data object Schedule : Screen("schedule", null)
     data object HotelDetail : Screen("hotelDetail/{hotelId}", null)
 }
@@ -167,7 +169,7 @@ fun GaeNolZaMain() {
                     onClick = { navController.navigate("chatScreen") },
                     shape = CircleShape,
                     modifier = Modifier.Companion
-                        //                    .align(Alignment.BottomEnd)
+    //                    .align(Alignment.BottomEnd)
                         .padding(16.dp)
                         .size(72.dp),
                 ) {
@@ -249,6 +251,7 @@ fun GaeNolZaMain() {
             }
             composable(Screen.MyPage.route) {
                 MyPageScreen(
+                    navController,
                     onLogoutClick = {
                         isLoggedIn = false
                         navController.navigate(Screen.Main.route) {
@@ -258,6 +261,7 @@ fun GaeNolZaMain() {
                     }
                 )
             }
+            composable(Screen.AnimalRegister.route) { AnimalRegisterScreen() }
             composable(Screen.Schedule.route) { ScheduleMainScreen() }
         }
     }

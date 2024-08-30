@@ -1,7 +1,7 @@
 package com.example.gaenolza.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,22 +15,28 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.gaenolza.R
 import com.example.gaenolza.ui.theme.ColorPalette
 
 @Composable
 fun MyPageScreen(
+    navController: NavController,
     onLogoutClick: () -> Unit
 ) {
     Column(
@@ -40,8 +46,9 @@ fun MyPageScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         TopBar()
-        Spacer(modifier = Modifier.height(20.dp))
-        MyPageMain(onLogoutClick = onLogoutClick)
+        Spacer(modifier = Modifier.height(60.dp))
+        MyPageMain(onLogoutClick = onLogoutClick,
+            navController)
     }
 }
 
@@ -64,32 +71,64 @@ fun TopBar() {
 }
 
 @Composable
-fun DogsList() {
+fun DogsList(navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        DogProfile("루이", R.drawable.ic_launcher_background)
-        DogProfile("찰리", R.drawable.ic_launcher_background)
-        DogProfile("밀크", R.drawable.ic_launcher_background)
+        DogProfile(navController)
+        DogProfile(navController)
+        DogProfile(navController)
     }
 }
 
 @Composable
-fun DogProfile(name: String, imageRes: Int) {
+fun DogProfile(navController: NavController,
+               name: String = "애완동물 추가",
+               imageRes: Int = R.drawable.ic_add,
+               ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(
-            painter = painterResource(id = imageRes),
-            contentDescription = name,
+        Box(
             modifier = Modifier
                 .size(80.dp)
-                .clip(RoundedCornerShape(16.dp)),
-            contentScale = ContentScale.Crop,
-        )
+                .drawBehind {
+                    val dashWidth = 25f
+                    val dashGap = 20f
+                    val pathEffect = PathEffect.dashPathEffect(floatArrayOf(dashWidth, dashGap), 0f)
+                    drawRoundRect(
+                        color = Color.Gray,
+                        style = Stroke(
+                            width = 3.dp.toPx(),
+                            pathEffect = pathEffect
+                        ),
+                        cornerRadius = CornerRadius(5f, 5f)
+                    )
+                }
+                .pointerInput(Unit) {
+                    detectTapGestures { navController.navigate("animalRegister") }
+                }
+        ) {
+            Icon(
+                painter = painterResource(id = imageRes),
+                tint = Color.Gray,
+                contentDescription = name,
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .size(40.dp)
+            )
+//            Image(
+//                painter = painterResource(id = imageRes),
+//                contentDescription = name,
+//                modifier = Modifier
+//                    .size(80.dp)
+//                    .clip(RoundedCornerShape(16.dp)),
+//                contentScale = ContentScale.Crop,
+//            )
+        }
         Spacer(modifier = Modifier.height(8.dp))
         Text(text = name, fontSize = 16.sp, fontWeight = FontWeight.Medium)
     }
@@ -109,8 +148,9 @@ fun MainButtons(onLogoutClick: () -> Unit) {
 }
 
 @Composable
-fun MyPageMain(onLogoutClick: () -> Unit) {
-    DogsList()
+fun MyPageMain(onLogoutClick: () -> Unit,
+               navController: NavController) {
+    DogsList(navController)
     Spacer(modifier = Modifier.height(20.dp))
     MainButtons(onLogoutClick = onLogoutClick)
 }
