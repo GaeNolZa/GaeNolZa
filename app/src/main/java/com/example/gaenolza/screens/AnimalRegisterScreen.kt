@@ -40,11 +40,11 @@ fun AnimalRegisterScreen(
     ) {
         Text("동물정보", style = MaterialTheme.typography.headlineMedium)
 
-        var animalID by remember { mutableStateOf("") }
+        var animalName by remember { mutableStateOf("") }
         OutlinedTextField(
-            value = animalID,
-            onValueChange = { animalID = it },
-            label = { Text("동물ID") },
+            value = animalName,
+            onValueChange = { animalName= it },
+            label = { Text("동물이름") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -84,7 +84,7 @@ fun AnimalRegisterScreen(
             CoroutineScope(Dispatchers.IO).launch {
                 sendAnimalData(
                     customerId = userID.toInt(),
-                    animalName = animalID,
+                    animalName = animalName,
                     animalSpecies = animalType,
                     animalBirthdate = LocalDate.parse(animalBirth),
                     gender = animalGender,
