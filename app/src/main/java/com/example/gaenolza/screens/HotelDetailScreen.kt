@@ -17,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.gaenolza.R
+import com.example.gaenolza.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -84,7 +85,7 @@ fun HotelDetailScreen(navController: NavController, hotelId: Int) {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Button(
-                    onClick = { /* 예약 로직 추가 */ },
+                    onClick = { navController.navigate(Screen.Schedule.route) },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("예약하기")
