@@ -47,8 +47,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.gaenolza.network.sendLoginData
-import com.example.gaenolza.screens.AnimalRegisterScreen
 import com.example.gaenolza.schedule.ScheduleMainScreen
+import com.example.gaenolza.screens.AnimalRegisterScreen
 import com.example.gaenolza.screens.HotelDetailScreen
 import com.example.gaenolza.screens.HotelScreen
 import com.example.gaenolza.screens.LoginScreen
@@ -95,6 +95,15 @@ sealed class Screen(val route: String, val iconResourceId: Int?) {
     data object HotelDetail : Screen("hotelDetail/{hotelId}", null)
 }
 
+data class Hotel(
+    val id: Int,
+    val name: String,
+    val rating: Float,
+    val reviewCount: Int,
+    val price: Int,
+    val imageResId: Int
+)
+
 @Composable
 fun GaeNolZaMain() {
     val navController = rememberNavController()
@@ -103,7 +112,14 @@ fun GaeNolZaMain() {
     val items = listOf(Screen.Main, Screen.Hotel, Screen.Service, Screen.Profile)
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = currentBackStackEntry?.destination?.route
-    // 더미 호텔 데이터 생성
+
+    val dummyHotels = remember {
+        listOf(
+            Hotel(1, "개랜드 호텔", 4.5f, 1234, 150000, R.drawable.hotel1),
+            Hotel(2, "시티 독 호텔", 4.2f, 867, 120000, R.drawable.hotel2),
+            Hotel(3, "오션 파라도기스", 4.7f, 2345, 200000, R.drawable.hotel3)
+        )
+    }
 
     Scaffold(
         modifier = Modifier.padding(bottom = 30.dp),
@@ -191,7 +207,9 @@ fun GaeNolZaMain() {
                 HomeScreen(
                     onCardClick = { cardId ->
                         println("Card clicked: $cardId")
-                    }
+                    },
+                    dummyHotels,
+                    navController
                 )
             }
             composable(Screen.Profile.route) {
@@ -241,13 +259,14 @@ fun GaeNolZaMain() {
             composable(Screen.SignUp.route) { SignupScreen(navController) }
             composable(Screen.ChatBot.route) { ChatBotScreen() }
             composable(Screen.Service.route) { ServiceScreen() }
-            composable(Screen.Hotel.route) { HotelScreen(navController = navController) }
+            composable(Screen.Hotel.route) { HotelScreen(navController = navController,
+                dummyHotels) }
             composable(
                 route = Screen.HotelDetail.route,
                 arguments = listOf(navArgument("hotelId") { type = NavType.IntType })
             ) { backStackEntry ->
                 val hotelId = backStackEntry.arguments?.getInt("hotelId") ?: return@composable
-                HotelDetailScreen(navController = navController, hotelId = hotelId)
+                HotelDetailScreen(navController = navController, hotelId = hotelId, dummyHotels)
             }
             composable(Screen.MyPage.route) {
                 MyPageScreen(
