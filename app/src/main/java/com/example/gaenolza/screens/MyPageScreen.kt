@@ -18,6 +18,11 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -32,7 +37,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.gaenolza.R
+import com.example.gaenolza.network.sendGetAnimalsByCustomerId
 import com.example.gaenolza.ui.theme.ColorPalette
+import java.time.LocalDate
 
 @Composable
 fun MyPageScreen(
@@ -47,8 +54,10 @@ fun MyPageScreen(
     ) {
         TopBar()
         Spacer(modifier = Modifier.height(60.dp))
-        MyPageMain(onLogoutClick = onLogoutClick,
-            navController)
+        MyPageMain(
+            onLogoutClick = onLogoutClick,
+            navController
+        )
     }
 }
 
@@ -72,23 +81,44 @@ fun TopBar() {
 
 @Composable
 fun DogsList(navController: NavController) {
+    var animals by remember { mutableStateOf(listOf<Animal>()) }
+
+    // Fetch animals data
+    LaunchedEffect(Unit) {
+        sendGetAnimalsByCustomerId(5) { result ->
+            result.fold(
+                onSuccess = { fetchedAnimals ->
+                    animals = fetchedAnimals
+                },
+                onFailure = { error ->
+                    println("Error fetching animals: ${error.message}")
+                }
+            )
+        }
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        DogProfile(navController)
-        DogProfile(navController)
+        // Render DogProfile for each animal
+        animals.forEach { animal ->
+            DogProfile(navController, name = animal.animalName)
+        }
+
+        // Add an additional DogProfile for adding a new pet
         DogProfile(navController)
     }
 }
 
 @Composable
-fun DogProfile(navController: NavController,
-               name: String = "애완동물 추가",
-               imageRes: Int = R.drawable.ic_add,
-               ) {
+fun DogProfile(
+    navController: NavController,
+    name: String = "애완동물 추가",
+    imageRes: Int = R.drawable.ic_add
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -120,14 +150,6 @@ fun DogProfile(navController: NavController,
                     .align(Alignment.Center)
                     .size(40.dp)
             )
-//            Image(
-//                painter = painterResource(id = imageRes),
-//                contentDescription = name,
-//                modifier = Modifier
-//                    .size(80.dp)
-//                    .clip(RoundedCornerShape(16.dp)),
-//                contentScale = ContentScale.Crop,
-//            )
         }
         Spacer(modifier = Modifier.height(8.dp))
         Text(text = name, fontSize = 16.sp, fontWeight = FontWeight.Medium)
@@ -142,14 +164,16 @@ fun MainButtons(onLogoutClick: () -> Unit) {
     ) {
         //버튼 함수화
         MyPageButton(text = "프로필", onClickSuccess = { })
-        MyPageButton(text = "예약내역", onClickSuccess = {  })
+        MyPageButton(text = "예약내역", onClickSuccess = { })
         MyPageButton(text = "로그아웃", onClickSuccess = { onLogoutClick() }, color = Color.LightGray)
     }
 }
 
 @Composable
-fun MyPageMain(onLogoutClick: () -> Unit,
-               navController: NavController) {
+fun MyPageMain(
+    onLogoutClick: () -> Unit,
+    navController: NavController
+) {
     DogsList(navController)
     Spacer(modifier = Modifier.height(20.dp))
     MainButtons(onLogoutClick = onLogoutClick)
@@ -162,13 +186,22 @@ fun MyPageButton(
     color: Color = ColorPalette.primaryPink
 ) {
     Button(
-    onClick = { onClickSuccess() },
-    modifier = Modifier
-        .fillMaxWidth(0.8f)
-        .height(48.dp),
-    shape = RoundedCornerShape(24.dp),
-    colors = ButtonDefaults.buttonColors(color)
+        onClick = { onClickSuccess() },
+        modifier = Modifier
+            .fillMaxWidth(0.8f)
+            .height(48.dp),
+        shape = RoundedCornerShape(24.dp),
+        colors = ButtonDefaults.buttonColors(color)
     ) {
         Text(text = text, color = Color.Black, fontSize = 18.sp)
     }
 }
+
+data class Animal(
+    val animalId: Int,
+    val customerId: Int,
+    val animalName: String,
+    val animalSpecies: String,
+    val animalBirthdate: LocalDate,
+    val gender: String
+)
