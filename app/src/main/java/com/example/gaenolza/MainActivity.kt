@@ -45,6 +45,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.gaenolza.network.sendLoginData
+import com.example.gaenolza.schedule.ScheduleMainScreen
 import com.example.gaenolza.screens.HotelScreen
 import com.example.gaenolza.screens.LoginScreen
 import com.example.gaenolza.screens.MyPageScreen
@@ -85,6 +86,7 @@ sealed class Screen(val route: String, val iconResourceId: Int?) {
     data object SignUp : Screen("signup", null)
     data object ChatBot : Screen("chatScreen", null)
     data object MyPage : Screen("myPage", null)
+    data object Schedule : Screen("schedule", null)
 }
 
 @Composable
@@ -160,7 +162,7 @@ fun GaeNolZaMain() {
                     onClick = { navController.navigate("chatScreen") },
                     shape = CircleShape,
                     modifier = Modifier.Companion
-    //                    .align(Alignment.BottomEnd)
+                        //                    .align(Alignment.BottomEnd)
                         .padding(16.dp)
                         .size(72.dp),
                 ) {
@@ -244,9 +246,11 @@ fun GaeNolZaMain() {
                     }
                 )
             }
+            composable(Screen.Schedule.route) { ScheduleMainScreen() }
         }
     }
 }
+
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
