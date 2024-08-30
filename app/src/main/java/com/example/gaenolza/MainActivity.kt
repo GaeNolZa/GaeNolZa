@@ -40,11 +40,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.gaenolza.network.sendLoginData
+import com.example.gaenolza.screens.Hotel
+import com.example.gaenolza.screens.HotelDetailScreen
 import com.example.gaenolza.screens.HotelScreen
 import com.example.gaenolza.screens.LoginScreen
 import com.example.gaenolza.screens.MyPageScreen
@@ -85,6 +89,7 @@ sealed class Screen(val route: String, val iconResourceId: Int?) {
     data object SignUp : Screen("signup", null)
     data object ChatBot : Screen("chatScreen", null)
     data object MyPage : Screen("myPage", null)
+    data object HotelDetail : Screen("hotelDetail/{hotelId}", null)
 }
 
 @Composable
@@ -95,6 +100,7 @@ fun GaeNolZaMain() {
     val items = listOf(Screen.Main, Screen.Hotel, Screen.Service, Screen.Profile)
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = currentBackStackEntry?.destination?.route
+    // 더미 호텔 데이터 생성
 
     Scaffold(
         modifier = Modifier.padding(bottom = 30.dp),
@@ -232,7 +238,14 @@ fun GaeNolZaMain() {
             composable(Screen.SignUp.route) { SignupScreen(navController) }
             composable(Screen.ChatBot.route) { ChatBotScreen() }
             composable(Screen.Service.route) { ServiceScreen() }
-            composable(Screen.Hotel.route) { HotelScreen() }
+            composable(Screen.Hotel.route) { HotelScreen(navController = navController) }
+            composable(
+                route = Screen.HotelDetail.route,
+                arguments = listOf(navArgument("hotelId") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val hotelId = backStackEntry.arguments?.getInt("hotelId") ?: return@composable
+                HotelDetailScreen(navController = navController, hotelId = hotelId)
+            }
             composable(Screen.MyPage.route) {
                 MyPageScreen(
                     onLogoutClick = {
