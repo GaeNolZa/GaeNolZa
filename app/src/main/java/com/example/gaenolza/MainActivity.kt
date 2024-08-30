@@ -58,6 +58,7 @@ import com.example.gaenolza.screens.LoginScreen
 import com.example.gaenolza.screens.MyPageScreen
 import com.example.gaenolza.screens.ServiceScreen
 import com.example.gaenolza.screens.SignupScreen
+import com.example.gaenolza.screens.TopBar
 import com.example.gaenolza.screens.chatbot.ChatBotScreen
 import com.example.gaenolza.ui.theme.GaeNolZaTheme
 import com.example.gaenolza.viewmodel.ProfileViewModel
@@ -118,6 +119,7 @@ fun GaeNolZaMain(profileViewModel: ProfileViewModel) {
     val items = listOf(Screen.Main, Screen.Hotel, Screen.Service, Screen.Profile)
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = currentBackStackEntry?.destination?.route
+    var showSearch by remember { mutableStateOf(false) }
 
     var hotels by remember { mutableStateOf<List<Hotel>>(emptyList()) }
 
@@ -146,6 +148,7 @@ fun GaeNolZaMain(profileViewModel: ProfileViewModel) {
 
     Scaffold(
         modifier = Modifier.padding(bottom = 30.dp),
+        { TopBar(onSearchClick = { showSearch = !showSearch },showSearch = showSearch) },
         bottomBar = {
             Box(
                 modifier = Modifier
@@ -161,6 +164,7 @@ fun GaeNolZaMain(profileViewModel: ProfileViewModel) {
                     barColor = Color(0xFF393939),
                     ballColor = Color(0xFFFF5BA0)
                 ) {
+
                     items.forEachIndexed { index, screen ->
                         Box(
                             modifier = Modifier

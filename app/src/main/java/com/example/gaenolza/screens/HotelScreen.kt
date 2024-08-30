@@ -9,6 +9,10 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,8 +35,9 @@ fun HotelScreen(
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        contentPadding = PaddingValues(16.dp)
+
     ) {
+
         item {
             Text(
                 "추천 호텔",
@@ -68,7 +73,6 @@ fun HotelScreen(
         }
     }
 }
-
 
 @Composable
 fun FeaturedHotelCard(hotel: Hotel, onHotelClick: () -> Unit) {
@@ -109,7 +113,7 @@ fun FeaturedHotelCard(hotel: Hotel, onHotelClick: () -> Unit) {
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.Bottom
                 ) {
-                    Column {
+                    Column{
                         HotelStar(hotel, color = Color.White)
                         Text("리뷰 ${hotel.reviewCount}개", color = Color.White)
                     }
