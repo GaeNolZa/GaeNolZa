@@ -19,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,12 +40,15 @@ import androidx.navigation.NavController
 import com.example.gaenolza.R
 import com.example.gaenolza.network.sendGetAnimalsByCustomerId
 import com.example.gaenolza.ui.theme.ColorPalette
+import com.example.gaenolza.viewmodel.AnimalData
+import com.example.gaenolza.viewmodel.ProfileViewModel
 import java.time.LocalDate
 
 @Composable
 fun MyPageScreen(
     navController: NavController,
-    onLogoutClick: () -> Unit
+    onLogoutClick: () -> Unit,
+    profileViewModel: ProfileViewModel
 ) {
     Column(
         modifier = Modifier
@@ -56,7 +60,8 @@ fun MyPageScreen(
         Spacer(modifier = Modifier.height(60.dp))
         MyPageMain(
             onLogoutClick = onLogoutClick,
-            navController
+            navController,
+            profileViewModel
         )
     }
 }
@@ -80,15 +85,16 @@ fun TopBar() {
 }
 
 @Composable
-fun DogsList(navController: NavController) {
-    var animals by remember { mutableStateOf(listOf<Animal>()) }
-
+fun DogsList(
+    navController: NavController,
+    profileViewModel: ProfileViewModel
+) {
     // Fetch animals data
     LaunchedEffect(Unit) {
-        sendGetAnimalsByCustomerId(5) { result ->
+        sendGetAnimalsByCustomerId(7) { result ->
             result.fold(
                 onSuccess = { fetchedAnimals ->
-                    animals = fetchedAnimals
+                    profileViewModel.updateAnimalDataState(fetchedAnimals)
                 },
                 onFailure = { error ->
                     println("Error fetching animals: ${error.message}")
@@ -104,7 +110,7 @@ fun DogsList(navController: NavController) {
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         // Render DogProfile for each animal
-        animals.forEach { animal ->
+        profileViewModel.animalDataState.collectAsState().value.forEach { animal ->
             DogProfile(navController, name = animal.animalName)
         }
 
@@ -139,7 +145,10 @@ fun DogProfile(
                     )
                 }
                 .pointerInput(Unit) {
-                    detectTapGestures { navController.navigate("animalRegister") }
+                    detectTapGestures {
+                        if (name == "애완동물 추가") {navController.navigate("animalRegister")
+                        } else navController.navigate("dog")
+                    }
                 }
         ) {
             Icon(
@@ -172,9 +181,13 @@ fun MainButtons(onLogoutClick: () -> Unit) {
 @Composable
 fun MyPageMain(
     onLogoutClick: () -> Unit,
-    navController: NavController
+    navController: NavController,
+    profileViewModel: ProfileViewModel
 ) {
-    DogsList(navController)
+    DogsList(
+        navController,
+        profileViewModel
+    )
     Spacer(modifier = Modifier.height(20.dp))
     MainButtons(onLogoutClick = onLogoutClick)
 }
@@ -196,12 +209,3 @@ fun MyPageButton(
         Text(text = text, color = Color.Black, fontSize = 18.sp)
     }
 }
-
-data class Animal(
-    val animalId: Int,
-    val customerId: Int,
-    val animalName: String,
-    val animalSpecies: String,
-    val animalBirthdate: LocalDate,
-    val gender: String
-)

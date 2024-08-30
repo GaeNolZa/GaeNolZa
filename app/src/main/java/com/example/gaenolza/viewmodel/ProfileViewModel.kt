@@ -2,6 +2,7 @@ package com.example.gaenolza.viewmodel
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import java.time.LocalDate
 
 data class ProfileData(
     val email: String,
@@ -11,14 +12,25 @@ data class ProfileData(
 )
 
 data class AnimalData(
+    val animalId: Int,
+    val customerId: Int,
     val animalName: String,
-    val email: String,
-    val animalType: String,
-    val animalBirth: Int,
-    val animalGender: String,
+    val animalSpecies: String,
+    val animalBirthdate: LocalDate,
+    val gender: String
 )
 
 class ProfileViewModel : ViewModel() {
     val profileDataState = MutableStateFlow<ProfileData>(ProfileData("","","",0))
-    val animalDataState = MutableStateFlow<AnimalData>(AnimalData("","","",0,""))
+    val animalDataState = MutableStateFlow<List<AnimalData>>(emptyList())
+
+    fun updateAnimalDataState(updateList: List<AnimalData>){
+        animalDataState.value = updateList
+    }
+
+    fun getAnimalInfo(index: Int) : AnimalData {
+        return animalDataState.value[index]
+    }
+
+
 }

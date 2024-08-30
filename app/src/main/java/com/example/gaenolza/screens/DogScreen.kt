@@ -14,6 +14,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.example.gaenolza.R
+import com.example.gaenolza.viewmodel.AnimalData
+import com.example.gaenolza.viewmodel.ProfileViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -28,13 +32,14 @@ data class SimpleDogInfo(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DogScreen(dogInfo: SimpleDogInfo, onBackClick: () -> Unit) {
+fun DogScreen(profileViewModel: ProfileViewModel,
+              navController: NavController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(dogInfo.name) },
+                title = { Text(profileViewModel.getAnimalInfo(1).animalName) },
                 navigationIcon = {
-                    IconButton(onClick = onBackClick) {
+                    IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
@@ -49,7 +54,7 @@ fun DogScreen(dogInfo: SimpleDogInfo, onBackClick: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
-                painter = painterResource(id = dogInfo.imageResId),
+                painter = painterResource(id = R.drawable.sample_dog_image),
                 contentDescription = "Dog Image",
                 modifier = Modifier
                     .size(200.dp)
@@ -57,13 +62,11 @@ fun DogScreen(dogInfo: SimpleDogInfo, onBackClick: () -> Unit) {
                 contentScale = ContentScale.Crop
             )
             Spacer(modifier = Modifier.height(16.dp))
-            InfoCard("ID", dogInfo.id)
+            InfoCard("종류", profileViewModel.getAnimalInfo(1).animalSpecies)
             Spacer(modifier = Modifier.height(8.dp))
-            InfoCard("종류", dogInfo.species)
+            InfoCard("생일", profileViewModel.getAnimalInfo(1).animalBirthdate.toString())
             Spacer(modifier = Modifier.height(8.dp))
-            InfoCard("생일", dogInfo.birthDate.format(DateTimeFormatter.ISO_DATE))
-            Spacer(modifier = Modifier.height(8.dp))
-            InfoCard("성별", dogInfo.gender)
+            InfoCard("성별", profileViewModel.getAnimalInfo(1).gender)
         }
     }
 }

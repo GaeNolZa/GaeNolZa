@@ -1,12 +1,12 @@
 package com.example.gaenolza.network
 
-import com.example.gaenolza.screens.Animal
+import com.example.gaenolza.viewmodel.AnimalData
 import org.json.JSONArray
 import java.time.LocalDate
 
 fun sendGetAnimalsByCustomerId(
     customerId: Int,
-    onResult: (Result<List<Animal>>) -> Unit
+    onResult: (Result<List<AnimalData>>) -> Unit
 ) {
     val url = "http://192.168.45.240:8080/animal/list/id/$customerId"
 
@@ -15,11 +15,11 @@ fun sendGetAnimalsByCustomerId(
             onSuccess = { responseData ->
                 try {
                     val jsonArray = JSONArray(responseData)
-                    val animals = mutableListOf<Animal>()
+                    val animals = mutableListOf<AnimalData>()
 
                     for (i in 0 until jsonArray.length()) {
                         val jsonObject = jsonArray.getJSONObject(i)
-                        val animal = Animal(
+                        val animal = AnimalData(
                             animalId = jsonObject.getInt("animalId"),
                             customerId = jsonObject.getInt("customerId"),
                             animalName = jsonObject.getString("animalName"),

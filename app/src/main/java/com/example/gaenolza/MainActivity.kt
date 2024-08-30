@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -36,7 +37,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
@@ -49,6 +49,7 @@ import androidx.navigation.navArgument
 import com.example.gaenolza.network.sendLoginData
 import com.example.gaenolza.schedule.ScheduleMainScreen
 import com.example.gaenolza.screens.AnimalRegisterScreen
+import com.example.gaenolza.screens.DogScreen
 import com.example.gaenolza.screens.HotelDetailScreen
 import com.example.gaenolza.screens.HotelScreen
 import com.example.gaenolza.screens.LoginScreen
@@ -57,6 +58,7 @@ import com.example.gaenolza.screens.ServiceScreen
 import com.example.gaenolza.screens.SignupScreen
 import com.example.gaenolza.screens.chatbot.ChatBotScreen
 import com.example.gaenolza.ui.theme.GaeNolZaTheme
+import com.example.gaenolza.viewmodel.ProfileViewModel
 import com.exyte.animatednavbar.AnimatedNavigationBar
 import com.exyte.animatednavbar.animation.balltrajectory.Parabolic
 import com.exyte.animatednavbar.animation.indendshape.Height
@@ -66,6 +68,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
+    private val profileViewModel: ProfileViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -76,7 +79,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             GaeNolZaTheme {
-                GaeNolZaMain()
+                GaeNolZaMain(profileViewModel)
             }
         }
     }
@@ -93,6 +96,7 @@ sealed class Screen(val route: String, val iconResourceId: Int?) {
     data object AnimalRegister : Screen("animalRegister", null)
     data object Schedule : Screen("schedule", null)
     data object HotelDetail : Screen("hotelDetail/{hotelId}", null)
+    data object DogScr : Screen("dog", null)
 }
 
 data class Hotel(
@@ -105,7 +109,7 @@ data class Hotel(
 )
 
 @Composable
-fun GaeNolZaMain() {
+fun GaeNolZaMain(profileViewModel: ProfileViewModel) {
     val navController = rememberNavController()
     var isLoggedIn by remember { mutableStateOf(false) }
     var selectedItem by remember { mutableIntStateOf(0) }
@@ -277,19 +281,20 @@ fun GaeNolZaMain() {
                             popUpTo(Screen.MyPage.route) { inclusive = true }
                             // MyPage 화면도 스택에서 제거하고 Main으로 이동
                         }
-                    }
+                    },
+                    profileViewModel
                 )
             }
             composable(Screen.AnimalRegister.route) { AnimalRegisterScreen(navController) }
             composable(Screen.Schedule.route) { ScheduleMainScreen() }
+            composable(Screen.DogScr.route) { DogScreen(profileViewModel, navController) }
         }
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    GaeNolZaTheme {
-        GaeNolZaMain()
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun DefaultPreview() {
+//    GaeNolZaTheme {
+//    }
+//}
