@@ -101,36 +101,10 @@ fun MainButtons(onLogoutClick: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Button(
-            onClick = { /*TODO*/ },
-            modifier = Modifier
-                .fillMaxWidth(0.8f)
-                .height(48.dp),
-            shape = RoundedCornerShape(24.dp),
-            colors = ButtonDefaults.buttonColors(ColorPalette.primaryPink)
-        ) {
-            Text(text = "프로필", color = Color.White, fontSize = 18.sp)
-        }
-        Button(
-            onClick = { /*TODO*/ },
-            modifier = Modifier
-                .fillMaxWidth(0.8f)
-                .height(48.dp),
-            shape = RoundedCornerShape(24.dp),
-            colors = ButtonDefaults.buttonColors(ColorPalette.primaryPink)
-        ) {
-            Text(text = "예약내역", color = Color.White, fontSize = 18.sp)
-        }
-        Button(
-            onClick = { onLogoutClick() },
-            modifier = Modifier
-                .fillMaxWidth(0.8f)
-                .height(48.dp),
-            shape = RoundedCornerShape(24.dp),
-            colors = ButtonDefaults.buttonColors(Color.LightGray)
-        ) {
-            Text(text = "로그아웃", color = Color.Black, fontSize = 18.sp)
-        }
+        //버튼 함수화
+        MyPageButton(text = "프로필", onClickSuccess = { })
+        MyPageButton(text = "예약내역", onClickSuccess = {  })
+        MyPageButton(text = "로그아웃", onClickSuccess = { onLogoutClick() }, color = Color.LightGray)
     }
 }
 
@@ -141,3 +115,20 @@ fun MyPageMain(onLogoutClick: () -> Unit) {
     MainButtons(onLogoutClick = onLogoutClick)
 }
 
+@Composable
+fun MyPageButton(
+    text: String,
+    onClickSuccess: () -> Unit,
+    color: Color = ColorPalette.primaryPink
+) {
+    Button(
+    onClick = { onClickSuccess() },
+    modifier = Modifier
+        .fillMaxWidth(0.8f)
+        .height(48.dp),
+    shape = RoundedCornerShape(24.dp),
+    colors = ButtonDefaults.buttonColors(color)
+    ) {
+        Text(text = text, color = Color.Black, fontSize = 18.sp)
+    }
+}

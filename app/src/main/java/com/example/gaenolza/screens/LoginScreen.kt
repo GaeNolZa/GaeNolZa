@@ -25,9 +25,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -54,7 +56,7 @@ import com.example.gaenolza.ui.theme.poppins
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
-    onLoginClick: (String, String, String) -> Unit,
+    onLoginClick: (String, String) -> Unit,
     onGoogleSignInClick: () -> Unit,
     onSignUpClick: () -> Unit,
     onFingerprintClick: () -> Unit
@@ -90,12 +92,11 @@ fun LoginScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginContent(
-    onLoginClick: (String, String, String) -> Unit,
+    onLoginClick: (String, String) -> Unit,
     onGoogleSignInClick: () -> Unit,
     onSignUpClick: () -> Unit,
     onFingerprintClick: () -> Unit
 ) {
-    var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -149,21 +150,6 @@ fun LoginContent(
         }
 
         Spacer(modifier = Modifier.height(24.dp))
-//        OutlinedTextField(
-//            value = name,
-//            onValueChange = { name = it },
-//            placeholder = { Text("개놀자", color = Color.Gray) },
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(vertical = 8.dp),
-//            shape = CircleShape,
-//            colors = TextFieldDefaults.outlinedTextFieldColors(
-//                containerColor = Color(0xFFEBF4FD),
-//                focusedBorderColor = Color.Transparent,
-//                unfocusedBorderColor = Color.Transparent
-//            )
-//        )
-
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
@@ -172,10 +158,12 @@ fun LoginContent(
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
             shape = CircleShape,
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                containerColor = Color(0xFFEBF4FD),
-                focusedBorderColor = Color.Transparent,
-                unfocusedBorderColor = Color.Transparent
+            colors = OutlinedTextFieldDefaults.colors(
+                //안쓰는 함수 최신 버전으로 업데이트 & focus 여부에 따라 색 변화(반영 예정)
+                unfocusedContainerColor = Color(0xFFEBF4FD),
+                focusedContainerColor = Color(0xFFEBF4FD),
+                unfocusedBorderColor = Color.Transparent,
+                focusedBorderColor = Color.Transparent
             )
         )
 
@@ -193,10 +181,11 @@ fun LoginContent(
                     .weight(1f)
                     .padding(end = 8.dp),
                 shape = CircleShape,
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    containerColor = Color(0xFFEBF4FD),
-                    focusedBorderColor = Color.Transparent,
-                    unfocusedBorderColor = Color.Transparent
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedContainerColor = Color(0xFFEBF4FD),
+                    focusedContainerColor = Color(0xFFEBF4FD),
+                    unfocusedBorderColor = Color.Transparent,
+                    focusedBorderColor = Color.Transparent
                 ),
                 visualTransformation = PasswordVisualTransformation()
             )
@@ -227,7 +216,7 @@ fun LoginContent(
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(
-            onClick = { onLoginClick(name, email, password) },
+            onClick = { onLoginClick(email, password) },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
