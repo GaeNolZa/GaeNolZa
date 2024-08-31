@@ -3,6 +3,18 @@ package com.example.gaenolza.viewmodel
 import androidx.lifecycle.ViewModel
 import com.example.gaenolza.R
 import kotlinx.coroutines.flow.MutableStateFlow
+import java.time.LocalDate
+
+data class Facility(
+    val facilityId: Int,
+    val address: String,
+    val facilityName: String,
+    val facilityContact: String,
+    val ownedFacility: String,
+    val rating: Float,
+    val reviewCount: Int,
+    val numberOfRooms: Int
+)
 
 data class HotelData(
     val id: Int,
@@ -10,9 +22,9 @@ data class HotelData(
     val rating: Float,
     val reviewCount: Int,
     val price: Int,
+    val numOfRooms: Int,
     var imageResId: Int
 )
-
 
 class HotelViewModel : ViewModel() {
     val hotelDataListState = MutableStateFlow<List<HotelData>>(emptyList())
@@ -32,6 +44,6 @@ class HotelViewModel : ViewModel() {
 
     fun getHotelInfoByID(HotelId: Int): HotelData {
         return hotelDataListState.value.find { it.id == HotelId }
-            ?: HotelData(0, "error", 0f, 0, 0, 0)
+            ?: HotelData(0, "error", 0f, 0, 0, 0,0)
     }
 }

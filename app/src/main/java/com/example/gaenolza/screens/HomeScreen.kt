@@ -479,14 +479,3 @@ fun VeterinarianCard(id: Int, name: String, description: String, onClick: (Int) 
         }
     }
 }
-
-data class Facility(
-    val facilityId: Int,
-    val address: String,
-    val facilityName: String,
-    val facilityContact: String,
-    val ownedFacility: String,
-    val rating: Float,
-    val reviewCount: Int,
-    val numberOfRooms: Int
-)

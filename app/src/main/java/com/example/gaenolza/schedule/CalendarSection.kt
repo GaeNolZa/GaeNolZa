@@ -58,13 +58,15 @@ import java.time.LocalDate
 import java.time.Month
 import java.time.YearMonth
 import java.time.format.TextStyle
+import java.time.temporal.ChronoUnit
 import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CalendarComponent() {
     var currentYearMonth by remember { mutableStateOf(YearMonth.now()) }
-    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    var selectedDate1 by remember { mutableStateOf<LocalDate?>(null) }
+    var selectedDate2 by remember { mutableStateOf<LocalDate?>(null) }
 
     Column(
         modifier = Modifier.fillMaxWidth()
@@ -75,9 +77,9 @@ fun CalendarComponent() {
             onYearMonthChanged = { newYearMonth ->
                 currentYearMonth = newYearMonth
                 // Adjust selectedDate if it's not in the new month
-                if (selectedDate.year != newYearMonth.year || selectedDate.month != newYearMonth.month) {
-                    selectedDate = newYearMonth.atDay(1)
-                }
+//                if (dateNow.year != newYearMonth.year || dateNow.month != newYearMonth.month) {
+//                    dateNow = newYearMonth.atDay(1)
+//                }
             }
         )
 
@@ -120,8 +122,11 @@ fun CalendarComponent() {
                         isSelected = false,
                         isCurrentDay = false,
                         isCurrentMonth = false,
-                        events = getEventsForDate(date),
-                        onDateSelected = {}
+//                        events = getEventsForDate(date),
+                        onDateSelected = {},
+                        isInSelect = dateInRange(selectedDate1,
+                            selectedDate2,
+                            date)
                     )
                 }
             }
@@ -132,11 +137,21 @@ fun CalendarComponent() {
                 item {
                     DayCell(
                         day = (day + 1).toString(),
-                        isSelected = date == selectedDate,
+                        isSelected = (date == selectedDate1)||(date == selectedDate2),
                         isCurrentDay = date == LocalDate.now(),
                         isCurrentMonth = true,
-                        events = getEventsForDate(date),
-                        onDateSelected = { selectedDate = date }
+//                        events = getEventsForDate(date),
+                        onDateSelected = { when(selectedDate1) {
+                            null -> selectedDate1 = date
+                            date -> {
+                                selectedDate1 = null
+                                selectedDate2 = null
+                            }
+                            else -> selectedDate2 = date
+                        } },
+                        isInSelect = dateInRange(selectedDate1,
+                            selectedDate2,
+                            date)
                     )
                 }
             }
@@ -151,8 +166,11 @@ fun CalendarComponent() {
                         isSelected = false,
                         isCurrentDay = false,
                         isCurrentMonth = false,
-                        events = getEventsForDate(date),
-                        onDateSelected = {}
+//                        events = getEventsForDate(date),
+                        onDateSelected = {},
+                        isInSelect = dateInRange(selectedDate1,
+                            selectedDate2,
+                            date)
                     )
                 }
             }
@@ -431,4 +449,14 @@ fun CustomExpandCard(
             }
         }
     }
+}
+
+fun dateInRange(date1: LocalDate?, date2: LocalDate?, inputDate: LocalDate): Boolean {
+    val minDate = listOfNotNull(date1, date2).minOrNull() ?: return false
+    val maxDate = listOfNotNull(date1, date2).maxOrNull() ?: return false
+    return inputDate in minDate..maxDate
+}
+
+fun daysBetween(date1: LocalDate, date2: LocalDate): Long {
+    return ChronoUnit.DAYS.between(date1, date2)
 }

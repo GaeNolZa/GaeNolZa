@@ -1,6 +1,5 @@
 package com.example.gaenolza.screens
 
-import Facility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -42,6 +41,7 @@ import com.example.gaenolza.dataclass.Reservation
 import com.example.gaenolza.network.sendGetFacilityById
 import com.example.gaenolza.network.sendGetReservations
 import com.example.gaenolza.ui.theme.ColorPalette
+import com.example.gaenolza.viewmodel.Facility
 import kotlinx.coroutines.launch
 
 @Composable
