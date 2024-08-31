@@ -1,8 +1,10 @@
 package com.example.gaenolza.network
 
 import Facility
+import com.example.gaenolza.dataclass.Reservation
 import com.example.gaenolza.viewmodel.AnimalData
 import org.json.JSONArray
+import org.json.JSONObject
 import java.time.LocalDate
 
 fun sendGetAnimalsByCustomerId(
@@ -111,6 +113,76 @@ fun sendGetFacilities(
                     }
 
                     onResult(Result.success(facilities))
+                } catch (e: Exception) {
+                    onResult(Result.failure(e))
+                }
+            },
+            onFailure = { error ->
+                onResult(Result.failure(error))
+            }
+        )
+    }
+}
+
+fun sendGetReservations(
+    customerId: Int, // 고객 ID를 인자로 받음
+    onResult: (Result<List<Reservation>>) -> Unit
+) {
+    val url = "$SERVER_ADDRESS/reservation/list/customer/$customerId" // 고객 ID에 따라 적절한 엔드포인트로 URL 설정
+
+    HttpClient.sendGetRequest(url) { result ->
+        result.fold(
+            onSuccess = { responseData ->
+                try {
+                    val jsonArray = JSONArray(responseData)
+                    val reservations = mutableListOf<Reservation>()
+
+                    for (i in 0 until jsonArray.length()) {
+                        val jsonObject = jsonArray.getJSONObject(i)
+                        val reservation = Reservation(
+                            reservationId = jsonObject.getInt("reservationId"),
+                            facilityId = jsonObject.getInt("facilityId"),
+                            animalId = jsonObject.getInt("animalId"),
+                            reservationDate = LocalDate.parse(jsonObject.getString("reservationDate")),
+                            customerId = jsonObject.getInt("customerId")
+                        )
+                        reservations.add(reservation)
+                    }
+
+                    onResult(Result.success(reservations))
+                } catch (e: Exception) {
+                    onResult(Result.failure(e))
+                }
+            },
+            onFailure = { error ->
+                onResult(Result.failure(error))
+            }
+        )
+    }
+}
+
+fun sendGetFacilityById(
+    facilityId: Int, // 시설 ID를 인자로 받음
+    onResult: (Result<Facility?>) -> Unit
+) {
+    val url = "$SERVER_ADDRESS/facility/find/id/$facilityId" // 시설 ID에 따라 적절한 엔드포인트로 URL 설정
+
+    HttpClient.sendGetRequest(url) { result ->
+        result.fold(
+            onSuccess = { responseData ->
+                try {
+                    val jsonObject = JSONObject(responseData)
+                    val facility = Facility(
+                        facilityId = jsonObject.getInt("facilityId"),
+                        address = jsonObject.getString("address"),
+                        facilityName = jsonObject.getString("facilityName"),
+                        facilityContact = jsonObject.getString("facilityContact"),
+                        ownedFacility = jsonObject.getString("ownedFacility"),
+                        rating = jsonObject.getDouble("rating").toFloat(),
+                        reviewCount = jsonObject.getInt("reviewCount"),
+                        numberOfRooms = jsonObject.getInt("numberOfRooms")
+                    )
+                    onResult(Result.success(facility))
                 } catch (e: Exception) {
                     onResult(Result.failure(e))
                 }
