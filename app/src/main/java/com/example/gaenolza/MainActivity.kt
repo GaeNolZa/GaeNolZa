@@ -135,6 +135,7 @@ fun GaeNolZaMain(profileViewModel: ProfileViewModel, hotelViewModel: HotelViewMo
                             rating = facility.rating,
                             reviewCount = facility.reviewCount,
                             price = (100000..200000).random(), // 가격은 임의로 설정
+                            numOfRooms = facility.numberOfRooms,
                             imageResId = R.drawable.ic_hotel // 이미지 리소스는 고정값이나 로직에 따라 변경 가능
                         )
                     }

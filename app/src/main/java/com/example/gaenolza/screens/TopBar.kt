@@ -1,6 +1,5 @@
 package com.example.gaenolza.screens
 
-import Facility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import com.example.gaenolza.R
 import com.example.gaenolza.network.sendGetFacilities
 import com.example.gaenolza.ui.theme.ColorPalette
+import com.example.gaenolza.viewmodel.Facility
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

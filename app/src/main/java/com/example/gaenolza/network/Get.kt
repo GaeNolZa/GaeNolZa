@@ -1,8 +1,8 @@
 package com.example.gaenolza.network
 
-import Facility
 import com.example.gaenolza.dataclass.Reservation
 import com.example.gaenolza.viewmodel.AnimalData
+import com.example.gaenolza.viewmodel.Facility
 import org.json.JSONArray
 import org.json.JSONObject
 import java.time.LocalDate
