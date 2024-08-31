@@ -162,14 +162,14 @@ fun DogProfile(
 }
 
 @Composable
-fun MainButtons(onLogoutClick: () -> Unit) {
+fun MainButtons(onLogoutClick: () -> Unit, navController: NavController) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         //버튼 함수화
         MyPageButton(text = "프로필", onClickSuccess = { })
-        MyPageButton(text = "예약내역", onClickSuccess = { })
+        MyPageButton(text = "예약내역", onClickSuccess = { navController.navigate("reservation") })
         MyPageButton(text = "로그아웃", onClickSuccess = { onLogoutClick() }, color = Color.LightGray)
     }
 }
@@ -185,7 +185,7 @@ fun MyPageMain(
         profileViewModel
     )
     Spacer(modifier = Modifier.height(20.dp))
-    MainButtons(onLogoutClick = onLogoutClick)
+    MainButtons(onLogoutClick = onLogoutClick, navController = navController)
 }
 
 @Composable

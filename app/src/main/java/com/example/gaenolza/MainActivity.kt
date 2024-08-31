@@ -56,6 +56,7 @@ import com.example.gaenolza.screens.HotelDetailScreen
 import com.example.gaenolza.screens.HotelScreen
 import com.example.gaenolza.screens.LoginScreen
 import com.example.gaenolza.screens.MyPageScreen
+import com.example.gaenolza.screens.ReservationScreen
 import com.example.gaenolza.screens.ServiceScreen
 import com.example.gaenolza.screens.SignupScreen
 import com.example.gaenolza.screens.TopBar
@@ -106,6 +107,7 @@ sealed class Screen(
     data object Schedule : Screen("schedule")
     data object HotelDetail : Screen("hotelDetail/{hotelId}")
     data object DogScr : Screen("dog/{dogID}")
+    data object Reservation : Screen("reservation")
 }
 
 @Composable
@@ -147,7 +149,7 @@ fun GaeNolZaMain(profileViewModel: ProfileViewModel, hotelViewModel: HotelViewMo
 
     Scaffold(
         modifier = Modifier.padding(bottom = 30.dp),
-        { TopBar(onSearchClick = { showSearch = !showSearch },showSearch = showSearch) },
+        { TopBar(onSearchClick = { showSearch = !showSearch }, showSearch = showSearch) },
         bottomBar = {
             Box(
                 modifier = Modifier
@@ -296,7 +298,11 @@ fun GaeNolZaMain(profileViewModel: ProfileViewModel, hotelViewModel: HotelViewMo
                 arguments = listOf(navArgument("hotelId") { type = NavType.IntType })
             ) { backStackEntry ->
                 val hotelId = backStackEntry.arguments?.getInt("hotelId") ?: return@composable
-                HotelDetailScreen(navController = navController, hotelId = hotelId, hotelViewModel) //호텔 뷰모델전달로 변경
+                HotelDetailScreen(
+                    navController = navController,
+                    hotelId = hotelId,
+                    hotelViewModel
+                ) //호텔 뷰모델전달로 변경
             }
             composable(Screen.MyPage.route) {
                 MyPageScreen(
@@ -320,6 +326,7 @@ fun GaeNolZaMain(profileViewModel: ProfileViewModel, hotelViewModel: HotelViewMo
                 val dogId = backStackEntry.arguments?.getInt("dogID") ?: 0
                 DogScreen(profileViewModel, navController, dogId)
             }
+            composable(Screen.Reservation.route) { ReservationScreen(7) }
         }
     }
 }
