@@ -54,6 +54,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gaenolza.R
 import com.example.gaenolza.ui.theme.ColorPalette
+import com.example.gaenolza.viewmodel.OnReservationInfo
+import com.example.gaenolza.viewmodel.ReservationViewModel
 import java.time.LocalDate
 import java.time.Month
 import java.time.YearMonth
@@ -63,7 +65,7 @@ import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun CalendarComponent() {
+fun CalendarComponent(reservationViewModel: ReservationViewModel) {
     var currentYearMonth by remember { mutableStateOf(YearMonth.now()) }
     var selectedDate1 by remember { mutableStateOf<LocalDate?>(null) }
     var selectedDate2 by remember { mutableStateOf<LocalDate?>(null) }
@@ -146,9 +148,30 @@ fun CalendarComponent() {
                             date -> {
                                 selectedDate1 = null
                                 selectedDate2 = null
+                                reservationViewModel.updateOnReservationDataState(
+                                    OnReservationInfo(null,
+                                        null,
+                                        0L,
+                                        0,
+                                        0,
+                                        0,
+                                        0)
+                                )
                             }
-                            else -> selectedDate2 = date
-                        } },
+                            else -> {
+                                selectedDate2 = date
+                                val updateReservationInfo = OnReservationInfo(
+                                    selectedDate1,
+                                    selectedDate2,
+                                    daysBetween(selectedDate1!!, selectedDate2!!),
+                                    0,
+                                    0,
+                                    0,
+                                    0
+                                )
+                                reservationViewModel.updateOnReservationDataState(updateReservationInfo)
+                            }
+                        }                                         },
                         isInSelect = dateInRange(selectedDate1,
                             selectedDate2,
                             date)

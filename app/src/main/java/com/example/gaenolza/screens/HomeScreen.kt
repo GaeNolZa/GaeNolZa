@@ -49,16 +49,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.gaenolza.R
+import com.example.gaenolza.Screen
 import com.example.gaenolza.screens.HotelStar
 import com.example.gaenolza.viewmodel.HotelData
 import com.example.gaenolza.viewmodel.HotelViewModel
+import com.example.gaenolza.viewmodel.ReservationViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     onCardClick: (Int) -> Unit,
     hotelViewModel: HotelViewModel,
-    navController: NavController
+    navController: NavController,
+    reservationViewModel: ReservationViewModel
 ) {
     val hotels = hotelViewModel.hotelDataListState.collectAsState().value
 
@@ -77,7 +80,8 @@ fun HomeScreen(
             item {
                 RecommendationSection(
                     onMoreClick = { /* TODO: Handle more click */ },
-                    hotels, navController
+                    hotels, navController,
+                    reservationViewModel
                 )
             }
             item { PromotionCardSection(onCardClick = onCardClick) }
@@ -91,7 +95,8 @@ fun HomeScreen(
 fun RecommendationSection(
     onMoreClick: () -> Unit,
     hotels: List<HotelData>,
-    navController: NavController
+    navController: NavController,
+    reservationViewModel: ReservationViewModel
 ) {
     Column(modifier = Modifier.padding(8.dp)) {
         Row(
@@ -128,7 +133,9 @@ fun RecommendationSection(
             items(hotels.size) { index ->
                 RecommendationCard(
                     hotelData = hotels[index],
-                    onRecommendCardTap = { navController.navigate("hotelDetail/${hotels[index].id}") }
+                    onRecommendCardTap = {
+                        reservationViewModel.updateHotelPath(hotels[index].id)
+                        navController.navigate(Screen.HotelDetail.route) }
                 )
             }
         }

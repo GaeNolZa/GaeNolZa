@@ -19,6 +19,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,12 +30,15 @@ import com.example.gaenolza.R
 import com.example.gaenolza.network.sendReservationData
 import com.example.gaenolza.ui.theme.ColorPalette
 import com.example.gaenolza.ui.theme.GaeNolZaTheme
+import com.example.gaenolza.viewmodel.ReservationViewModel
 import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ScheduleMainScreen() {
-    Column(modifier = Modifier.fillMaxSize()
+fun ScheduleMainScreen(reservationViewModel: ReservationViewModel) {
+    val onReservationInfoState = reservationViewModel.onReservationState.collectAsState().value
+    Column(modifier = Modifier
+        .fillMaxSize()
         .padding(16.dp)
         .background(Color.White)) {
         Column(
@@ -46,7 +50,7 @@ fun ScheduleMainScreen() {
     //        Spacer(modifier = Modifier.height(8.dp))
     //        HorizontalDivider()
             Spacer(modifier = Modifier.height(16.dp))
-            CalendarComponent()
+            CalendarComponent(reservationViewModel)
             Spacer(modifier = Modifier.height(16.dp))
         }
         Row(
@@ -63,7 +67,7 @@ fun ScheduleMainScreen() {
                 Button(onClick = {
                     // 여기에 원하는 파라미터를 사용하여 sendReservationData를 직접 호출합니다.
                     sendReservationData(
-                        facilityId = 8,
+                        facilityId = onReservationInfoState.hotelId,
                         animalId = 4,
                         reservationDate = LocalDate.parse("2024-09-15"),
                         customerId = 7
@@ -83,17 +87,12 @@ fun ScheduleMainScreen() {
                     colors = ButtonDefaults.buttonColors(
                         containerColor = ColorPalette.primaryPink,
                         disabledContainerColor = Color.Gray
-                    )) {
+                    ),
+                    enabled = if (reservationViewModel.onReservationState.collectAsState().value.reservationDate2==null) false else true
+                ) {
                     Text(text = "예약하기")
                 }
             }
         }
     }
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true)
-@Composable
-fun ScheduleMainScreenPreview() {
-    GaeNolZaTheme { ScheduleMainScreen() }
 }
