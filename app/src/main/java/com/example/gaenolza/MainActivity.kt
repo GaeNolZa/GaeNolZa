@@ -61,6 +61,8 @@ import com.example.gaenolza.screens.SignupScreen
 import com.example.gaenolza.screens.TopBar
 import com.example.gaenolza.screens.chatbot.ChatBotScreen
 import com.example.gaenolza.ui.theme.GaeNolZaTheme
+import com.example.gaenolza.viewmodel.HotelData
+import com.example.gaenolza.viewmodel.HotelViewModel
 import com.example.gaenolza.viewmodel.ProfileViewModel
 import com.exyte.animatednavbar.AnimatedNavigationBar
 import com.exyte.animatednavbar.animation.balltrajectory.Parabolic
@@ -72,6 +74,7 @@ import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     private val profileViewModel: ProfileViewModel by viewModels()
+    private val hotelViewModel: HotelViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -82,7 +85,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             GaeNolZaTheme {
-                GaeNolZaMain(profileViewModel)
+                GaeNolZaMain(profileViewModel, hotelViewModel)
             }
         }
     }
@@ -105,17 +108,8 @@ sealed class Screen(
     data object DogScr : Screen("dog/{dogID}")
 }
 
-data class Hotel(
-    val id: Int,
-    val name: String,
-    val rating: Float,
-    val reviewCount: Int,
-    val price: Int,
-    val imageResId: Int
-)
-
 @Composable
-fun GaeNolZaMain(profileViewModel: ProfileViewModel) {
+fun GaeNolZaMain(profileViewModel: ProfileViewModel, hotelViewModel: HotelViewModel) {
     val navController = rememberNavController()
     var isLoggedIn by remember { mutableStateOf(false) }
     var selectedItem by remember { mutableIntStateOf(0) }
@@ -124,15 +118,16 @@ fun GaeNolZaMain(profileViewModel: ProfileViewModel) {
     val currentDestination = currentBackStackEntry?.destination?.route
     var showSearch by remember { mutableStateOf(false) }
 
-    var hotels by remember { mutableStateOf<List<Hotel>>(emptyList()) }
+
+//    var hotels by remember { mutableStateOf<List<HotelData>>(emptyList()) }
 
     LaunchedEffect(Unit) {
         sendGetFacilities { result ->
             result.fold(
                 onSuccess = { facilities ->
                     // Facility 데이터를 Hotel로 변환하여 hotels 리스트에 저장
-                    hotels = facilities.map { facility ->
-                        Hotel(
+                    val hotels = facilities.map { facility ->
+                        HotelData(
                             id = facility.facilityId,
                             name = facility.facilityName,
                             rating = facility.rating,
@@ -141,6 +136,7 @@ fun GaeNolZaMain(profileViewModel: ProfileViewModel) {
                             imageResId = R.drawable.ic_hotel // 이미지 리소스는 고정값이나 로직에 따라 변경 가능
                         )
                     }
+                    hotelViewModel.updateHotelDataState(hotels) //호텔 데이터 리스트를 뷰모델에 업데이트
                 },
                 onFailure = { error ->
                     println("Error fetching facilities: ${error.message}")
@@ -238,7 +234,7 @@ fun GaeNolZaMain(profileViewModel: ProfileViewModel) {
                     onCardClick = { cardId ->
                         println("Card clicked: $cardId")
                     },
-                    hotels = hotels, // hotels 리스트를 HomeScreen에 전달
+                    hotelViewModel, // hotels 리스트 대신 호텔 뷰모델 전달
                     navController = navController
                 )
             }
@@ -292,7 +288,7 @@ fun GaeNolZaMain(profileViewModel: ProfileViewModel) {
             composable(Screen.Hotel.route) {
                 HotelScreen(
                     navController = navController,
-                    hotels
+                    hotelViewModel
                 )
             }
             composable(
@@ -300,7 +296,7 @@ fun GaeNolZaMain(profileViewModel: ProfileViewModel) {
                 arguments = listOf(navArgument("hotelId") { type = NavType.IntType })
             ) { backStackEntry ->
                 val hotelId = backStackEntry.arguments?.getInt("hotelId") ?: return@composable
-                HotelDetailScreen(navController = navController, hotelId = hotelId, hotels = hotels)
+                HotelDetailScreen(navController = navController, hotelId = hotelId, hotelViewModel) //호텔 뷰모델전달로 변경
             }
             composable(Screen.MyPage.route) {
                 MyPageScreen(

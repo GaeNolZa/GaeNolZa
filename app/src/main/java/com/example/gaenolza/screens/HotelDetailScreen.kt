@@ -28,15 +28,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.gaenolza.Hotel
 import com.example.gaenolza.Screen
+import com.example.gaenolza.viewmodel.HotelViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HotelDetailScreen(navController: NavController, hotelId: Int, hotels: List<Hotel>) {
+fun HotelDetailScreen(navController: NavController, hotelId: Int, hotelViewModel: HotelViewModel) {
 
     // hotels 리스트에서 hotelId에 해당하는 호텔을 찾습니다.
-    val hotel = hotels.find { it.id == hotelId } ?: return
+    // hotels 리스트에서 호텔뷰모델로 변경
+    val hotel = hotelViewModel.getHotelInfoByID(hotelId)
 
     Scaffold(
         topBar = {
