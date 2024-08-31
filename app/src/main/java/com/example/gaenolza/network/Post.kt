@@ -63,3 +63,24 @@ fun sendAnimalData(
 
     HttpClient.sendPostRequest(url, jsonData, onResult)
 }
+
+fun sendReservationData(
+    facilityId: Int,
+    animalId: Int,
+    reservationDate: LocalDate,
+    customerId: Int,
+    onResult: (Result<String>) -> Unit
+) {
+    val url = "$SERVER_ADDRESS/reservation/add"
+
+    val jsonObject = JSONObject().apply {
+        put("facilityId", facilityId)
+        put("animalId", animalId)
+        put("reservationDate", reservationDate)
+        put("customerId", customerId)
+    }
+
+    val jsonData = jsonObject.toString()
+
+    HttpClient.sendPostRequest(url, jsonData, onResult)
+}

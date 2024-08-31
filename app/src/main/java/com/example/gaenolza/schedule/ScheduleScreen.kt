@@ -26,8 +26,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.gaenolza.R
+import com.example.gaenolza.network.sendReservationData
 import com.example.gaenolza.ui.theme.ColorPalette
 import com.example.gaenolza.ui.theme.GaeNolZaTheme
+import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -58,7 +60,26 @@ fun ScheduleMainScreen() {
                 horizontalAlignment = Alignment.Start) {
                 Text(text = "3박 4일 / n원",
                     modifier = Modifier.padding(bottom = 20.dp))
-                Button(onClick = { /*TODO*/ },
+                Button(onClick = {
+                    // 여기에 원하는 파라미터를 사용하여 sendReservationData를 직접 호출합니다.
+                    sendReservationData(
+                        facilityId = 8,
+                        animalId = 4,
+                        reservationDate = LocalDate.parse("2024-09-15"),
+                        customerId = 7
+                    ) { result ->
+                        result.fold(
+                            onSuccess = {
+                                // 예약 성공 시 처리
+                                println("예약 성공: $it")
+                            },
+                            onFailure = { error ->
+                                // 예약 실패 시 처리
+                                println("예약 실패: ${error.message}")
+                            }
+                        )
+                    }
+                },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = ColorPalette.primaryPink,
                         disabledContainerColor = Color.Gray
