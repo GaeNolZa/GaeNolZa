@@ -31,10 +31,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,18 +48,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.gaenolza.Hotel
 import com.example.gaenolza.R
 import com.example.gaenolza.screens.HotelStar
-import com.example.gaenolza.screens.TopBar
+import com.example.gaenolza.viewmodel.HotelData
+import com.example.gaenolza.viewmodel.HotelViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     onCardClick: (Int) -> Unit,
-    hotels: List<Hotel>,
+    hotelViewModel: HotelViewModel,
     navController: NavController
 ) {
+    val hotels = hotelViewModel.hotelDataListState.collectAsState().value
 
     Box(
         modifier = Modifier
@@ -92,7 +90,7 @@ fun HomeScreen(
 @Composable
 fun RecommendationSection(
     onMoreClick: () -> Unit,
-    hotels: List<Hotel>,
+    hotels: List<HotelData>,
     navController: NavController
 ) {
     Column(modifier = Modifier.padding(8.dp)) {
@@ -139,7 +137,7 @@ fun RecommendationSection(
 
 @Composable
 fun RecommendationCard(
-    hotelData: Hotel,
+    hotelData: HotelData,
     onRecommendCardTap: () -> Unit
 ) {
     Card(
