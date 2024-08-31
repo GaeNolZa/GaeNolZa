@@ -9,7 +9,7 @@ fun sendGetAnimalsByCustomerId(
     customerId: Int,
     onResult: (Result<List<AnimalData>>) -> Unit
 ) {
-    val url = "http://192.168.45.36:8080/animal/list/id/$customerId"
+    val url = "$SERVER_ADDRESS/animal/list/id/$customerId"
 
     HttpClient.sendGetRequest(url) { result ->
         result.fold(
@@ -46,7 +46,7 @@ fun sendGetAnimalsByCustomerId(
 fun sendGetFacilities(
     onResult: (Result<List<Facility>>) -> Unit
 ) {
-    val url = "http://192.168.45.36:8080/facility/list"  // 적절한 엔드포인트로 URL 설정
+    val url = "$SERVER_ADDRESS/facility/list"  // 적절한 엔드포인트로 URL 설정
 
     HttpClient.sendGetRequest(url) { result ->
         result.fold(

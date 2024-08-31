@@ -10,7 +10,7 @@ fun sendCustomerRegistration(
     phoneNumber: String,
     onResult: (Result<String>) -> Unit
 ) {
-    val url = "http://192.168.45.36:8080/customer/add"
+    val url = "$SERVER_ADDRESS/customer/add"
 
     val jsonObject = JSONObject().apply {
         put("customerName", customerName)
@@ -29,7 +29,7 @@ fun sendLoginData(
     password: String,
     onResult: (Result<String>) -> Unit
 ) {
-    val url = "http://192.168.45.36:8080/customer/login"
+    val url = "$SERVER_ADDRESS/customer/login"
 
     val jsonObject = JSONObject().apply {
         put("email", email)
@@ -49,7 +49,7 @@ fun sendAnimalData(
     gender: String,
     onResult: (Result<String>) -> Unit
 ) {
-    val url = "http://192.168.45.36:8080/animal/add"
+    val url = "$SERVER_ADDRESS/animal/add"
 
     val jsonObject = JSONObject().apply {
         put("customerId", customerId)
