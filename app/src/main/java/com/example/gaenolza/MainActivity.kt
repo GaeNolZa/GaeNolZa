@@ -150,7 +150,13 @@ fun GaeNolZaMain(profileViewModel: ProfileViewModel, hotelViewModel: HotelViewMo
 
     Scaffold(
         modifier = Modifier.padding(bottom = 30.dp),
-        { TopBar(onSearchClick = { showSearch = !showSearch }, showSearch = showSearch) },
+        {
+            TopBar(
+                onSearchClick = { showSearch = !showSearch },
+                showSearch = showSearch,
+                navController
+            )
+        },
         bottomBar = {
             Box(
                 modifier = Modifier

@@ -1,6 +1,7 @@
 package com.example.gaenolza.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,6 +37,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.gaenolza.R
 import com.example.gaenolza.network.sendGetFacilities
 import com.example.gaenolza.ui.theme.ColorPalette
@@ -45,7 +47,8 @@ import com.example.gaenolza.viewmodel.Facility
 @Composable
 fun TopBar(
     onSearchClick: () -> Unit,
-    showSearch: Boolean
+    showSearch: Boolean,
+    navController: NavController
 ) {
     var searchQuery by remember { mutableStateOf("") }
     var isSearchActive by remember { mutableStateOf(false) }
@@ -151,6 +154,10 @@ fun TopBar(
                                 .padding(8.dp)
                                 .background(Color.LightGray)
                                 .padding(8.dp)
+                                .clickable {
+                                    navController.navigate("hotelDetail/${facility.facilityId}")
+                                    onSearchClick()
+                                }
                         )
                     }
                 }
