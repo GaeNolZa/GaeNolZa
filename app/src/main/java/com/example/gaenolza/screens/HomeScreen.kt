@@ -1,3 +1,4 @@
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,7 +32,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,11 +61,11 @@ import com.example.gaenolza.screens.HotelStar
 import com.example.gaenolza.viewmodel.HotelData
 import com.example.gaenolza.viewmodel.HotelViewModel
 import com.example.gaenolza.viewmodel.ReservationViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    onCardClick: (Int) -> Unit,
     hotelViewModel: HotelViewModel,
     navController: NavController,
     reservationViewModel: ReservationViewModel
@@ -84,7 +91,7 @@ fun HomeScreen(
                     reservationViewModel
                 )
             }
-            item { PromotionCardSection(onCardClick = onCardClick) }
+            item { PromotionCardSection() }
             item { IconButtonGrid() }
             item { VeterinarianSection(onVeterinarianClick = { /* TODO: Handle vet click */ }) }
         }
@@ -135,7 +142,8 @@ fun RecommendationSection(
                     hotelData = hotels[index],
                     onRecommendCardTap = {
                         reservationViewModel.updatePathHotelId(hotels[index].id)
-                        navController.navigate(Screen.HotelDetail.route) }
+                        navController.navigate(Screen.HotelDetail.route)
+                    }
                 )
             }
         }
@@ -260,7 +268,8 @@ fun RecommendationCard(
 //}
 
 @Composable
-fun PromotionCardSection(onCardClick: (Int) -> Unit) {
+fun PromotionCardSection(
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -274,7 +283,9 @@ fun PromotionCardSection(onCardClick: (Int) -> Unit) {
             buttonText = "쿠폰받기 >",
             backgroundColor = Color(0xFFFFE8EC),
             modifier = Modifier.weight(1f),
-            onClick = onCardClick
+            onClick = {
+
+            }
         )
         PromotionCard(
             id = 1,
@@ -283,7 +294,7 @@ fun PromotionCardSection(onCardClick: (Int) -> Unit) {
             buttonText = "쿠폰받기 >",
             backgroundColor = Color(0xFFE8F4FF),
             modifier = Modifier.weight(1f),
-            onClick = onCardClick
+            onClick = { }
         )
     }
 }

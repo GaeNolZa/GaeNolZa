@@ -73,7 +73,7 @@ fun ScheduleMainScreen(reservationViewModel: ReservationViewModel,
                     Image(painter = painterResource(id = R.drawable.sample_dog_image), contentDescription = "")
                 }
                 if (onReservationInfoState.animalId!=0) {
-                    Text(text = profileViewModel.getAnimalInfoByID(onReservationInfoState.animalId)!!.animalName)
+                    Text(text = profileViewModel.getAnimalInfoByID(onReservationInfoState.animalId).animalName)
                 }
             }
             Column(
@@ -83,12 +83,13 @@ fun ScheduleMainScreen(reservationViewModel: ReservationViewModel,
                     modifier = Modifier.padding(bottom = 20.dp))
                 Button(onClick = {
                     // 여기에 원하는 파라미터를 사용하여 sendReservationData를 직접 호출합니다.
-                    for (i in 0 until onReservationInfoState.reservationLong) {
+                    val onReservationStateSnap = reservationViewModel.onReservationState.value
+                    for (i in 0 until onReservationStateSnap.reservationLong) {
                         sendReservationData(
-                            facilityId = onReservationInfoState.hotelId,
-                            animalId = onReservationInfoState.animalId,
-                            reservationDate = LocalDate.parse(onReservationInfoState.reservationDate1!!.plusDays(i).toString()),
-                            customerId = onReservationInfoState.customerId
+                            facilityId = onReservationStateSnap.hotelId,
+                            animalId = onReservationStateSnap.animalId,
+                            reservationDate = LocalDate.parse(onReservationStateSnap.reservationDate1!!.plusDays(i).toString()),
+                            customerId = onReservationStateSnap.customerId
                         ) { result ->
                             result.fold(
                                 onSuccess = {

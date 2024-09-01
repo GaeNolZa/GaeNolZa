@@ -33,8 +33,8 @@ class ProfileViewModel : ViewModel() {
         return animalDataState.value
     }
 
-    fun getAnimalInfoByID(dogID: Int): AnimalData? {
-        return animalDataState.value.find { it.animalId == dogID }
+    fun getAnimalInfoByID(dogID: Int): AnimalData {
+        return animalDataState.value.find { it.animalId == dogID } ?: AnimalData(0,0,"","",LocalDate.now(),"")
     }
 
 

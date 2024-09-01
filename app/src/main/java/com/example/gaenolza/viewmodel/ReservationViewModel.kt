@@ -27,7 +27,7 @@ data class OnReservationInfo(
 class ReservationViewModel : ViewModel(){
     val reservationDateState = MutableStateFlow<List<ReservationData>>(emptyList())
     val onReservationState = MutableStateFlow<OnReservationInfo>(
-        OnReservationInfo(null,null,0,0,0,0,7,0))
+        OnReservationInfo(null,null,0,0,5,2,7,0))
 
     fun updateOnReservationDataState(updateData: OnReservationInfo) {
         onReservationState.value = updateData

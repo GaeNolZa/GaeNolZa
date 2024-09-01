@@ -250,9 +250,6 @@ fun GaeNolZaMain(
         ) {
             composable(Screen.Main.route) {
                 HomeScreen(
-                    onCardClick = { cardId ->
-                        println("Card clicked: $cardId")
-                    },
                     hotelViewModel, // hotels 리스트 대신 호텔 뷰모델 전달
                     navController = navController,
                     reservationViewModel
