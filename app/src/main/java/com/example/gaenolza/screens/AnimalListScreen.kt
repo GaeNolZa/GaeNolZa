@@ -113,7 +113,7 @@ fun AnimalListTopbar() {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "예약내역",
+            text = "반려동물 목록",
             color = Color.White,
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold
