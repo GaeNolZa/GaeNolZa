@@ -1,6 +1,7 @@
 package com.example.gaenolza.schedule
 
 import android.os.Build
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -79,6 +81,7 @@ fun ScheduleMainScreen(reservationViewModel: ReservationViewModel,
             Column(
                 modifier = Modifier.padding(start = 16.dp),
                 horizontalAlignment = Alignment.Start) {
+                val context = LocalContext.current
                 Text(text = "${onReservationInfoState.reservationLong}박 ${onReservationInfoState.reservationLong+1}일 / ${onReservationInfoState.reservationLong*onReservationInfoState.hotelPricePerDay}원",
                     modifier = Modifier.padding(bottom = 20.dp))
                 Button(onClick = {
@@ -95,6 +98,8 @@ fun ScheduleMainScreen(reservationViewModel: ReservationViewModel,
                                 onSuccess = {
                                     // 예약 성공 시 처리
                                     println("예약 성공: $it")
+                                    Toast.makeText(context, "예약 성공", Toast.LENGTH_SHORT).show()
+                                    navController.navigate(Screen.Main.route)
                                 },
                                 onFailure = { error ->
                                     // 예약 실패 시 처리
