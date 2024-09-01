@@ -158,7 +158,7 @@ fun TopBar(
                                 .background(Color.LightGray)
                                 .padding(8.dp)
                                 .clickable {
-                                    reservationViewModel.updateHotelPath(facility.facilityId)
+                                    reservationViewModel.updatePathHotelId(facility.facilityId)
                                     navController.navigate(Screen.HotelDetail.route)
                                     onSearchClick()
                                 }

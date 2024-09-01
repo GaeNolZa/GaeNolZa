@@ -101,7 +101,9 @@ fun HotelDetailScreen(navController: NavController,
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Button(
-                    onClick = { navController.navigate(Screen.Schedule.route) },
+                    onClick = {
+                        reservationViewModel.updatePathHotelPrice(hotel.price)
+                        navController.navigate(Screen.Schedule.route) },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("예약하기")

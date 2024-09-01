@@ -155,15 +155,17 @@ fun CalendarComponent(reservationViewModel: ReservationViewModel) {
                                         0,
                                         0,
                                         0,
+                                        0,
                                         0)
                                 )
                             }
                             else -> {
                                 selectedDate2 = date
                                 val updateReservationInfo = OnReservationInfo(
-                                    selectedDate1,
-                                    selectedDate2,
+                                    listOfNotNull(selectedDate1, selectedDate2).minOrNull(),
+                                    listOfNotNull(selectedDate1, selectedDate2).maxOrNull(),
                                     daysBetween(selectedDate1!!, selectedDate2!!),
+                                    0,
                                     0,
                                     0,
                                     0,

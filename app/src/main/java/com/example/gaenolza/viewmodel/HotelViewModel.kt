@@ -23,11 +23,13 @@ data class HotelData(
     val reviewCount: Int,
     val price: Int,
     val numOfRooms: Int,
+    val address: String,
     var imageResId: Int
 )
 
 class HotelViewModel : ViewModel() {
     val hotelDataListState = MutableStateFlow<List<HotelData>>(emptyList())
+    val facilityDataListState = MutableStateFlow<List<Facility>>(emptyList())
 
     fun getHotelInfo(): List<HotelData> {
         return hotelDataListState.value
@@ -44,6 +46,10 @@ class HotelViewModel : ViewModel() {
 
     fun getHotelInfoByID(HotelId: Int): HotelData {
         return hotelDataListState.value.find { it.id == HotelId }
-            ?: HotelData(0, "error", 0f, 0, 0, 0,0)
+            ?: HotelData(0, "error", 0f, 0, 0, 0,"",0)
+    }
+
+    fun updateFacilityDataState(updateList: List<Facility>) {
+        facilityDataListState.value = updateList
     }
 }

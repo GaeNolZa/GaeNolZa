@@ -64,7 +64,7 @@ fun HotelScreen(
             ) {
                 items(hotels.take(3)) { hotel -> // hotels 리스트에서 상위 3개 항목 사용
                     FeaturedHotelCard(hotel, onHotelClick = {
-                        reservationViewModel.updateHotelPath(hotel.id)
+                        reservationViewModel.updatePathHotelId(hotel.id)
                         navController.navigate(Screen.HotelDetail.route)
                     })
                 }
@@ -83,7 +83,7 @@ fun HotelScreen(
 
         items(hotels) { hotel -> // hotels 리스트 사용
             HotelCard(hotel, onHotelClick = {
-                reservationViewModel.updateHotelPath(hotel.id)
+                reservationViewModel.updatePathHotelId(hotel.id)
                 navController.navigate(Screen.HotelDetail.route)
             })
         }

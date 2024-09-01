@@ -134,7 +134,7 @@ fun RecommendationSection(
                 RecommendationCard(
                     hotelData = hotels[index],
                     onRecommendCardTap = {
-                        reservationViewModel.updateHotelPath(hotels[index].id)
+                        reservationViewModel.updatePathHotelId(hotels[index].id)
                         navController.navigate(Screen.HotelDetail.route) }
                 )
             }
