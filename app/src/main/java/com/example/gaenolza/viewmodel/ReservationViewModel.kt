@@ -17,7 +17,7 @@ data class OnReservationInfo(
     var reservationDate1: LocalDate?,
     var reservationDate2: LocalDate?,
     var reservationLong: Long,
-    var reservationPrice: Int,
+    var reservationPrice: Long,
     var animalId: Int,
     var hotelId: Int,
     var customerId: Int,
