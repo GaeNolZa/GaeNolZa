@@ -42,22 +42,26 @@ import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ScheduleMainScreen(reservationViewModel: ReservationViewModel,
-                       profileViewModel: ProfileViewModel,
-                       navController: NavController) {
+fun ScheduleMainScreen(
+    reservationViewModel: ReservationViewModel,
+    profileViewModel: ProfileViewModel,
+    navController: NavController
+) {
     val onReservationInfoState = reservationViewModel.onReservationState.collectAsState().value
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp)
-        .background(Color.White)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+            .background(Color.White)
+    ) {
         Column(
             modifier = Modifier,
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-    //        ScheduleScreenHeader(onBackClick = { navHostController.navigate(Screen.Main.route) })
-    //        Spacer(modifier = Modifier.height(8.dp))
-    //        HorizontalDivider()
+            //        ScheduleScreenHeader(onBackClick = { navHostController.navigate(Screen.Main.route) })
+            //        Spacer(modifier = Modifier.height(8.dp))
+            //        HorizontalDivider()
             Spacer(modifier = Modifier.height(16.dp))
             CalendarComponent(reservationViewModel)
             Spacer(modifier = Modifier.height(16.dp))
@@ -65,55 +69,65 @@ fun ScheduleMainScreen(reservationViewModel: ReservationViewModel,
         Row(
             horizontalArrangement = Arrangement.Start
         ) {
-            Column {
-                Box(modifier = Modifier.width(120.dp)
-                    .pointerInput(Unit){
-                        detectTapGestures {
-                            navController.navigate(Screen.AnimalList.route)
-                        }
-                    }){
-                    Image(painter = painterResource(id = R.drawable.sample_dog_image), contentDescription = "")
-                }
-                if (onReservationInfoState.animalId!=0) {
-                    Text(text = profileViewModel.getAnimalInfoByID(onReservationInfoState.animalId).animalName)
-                }
+            Box(modifier = Modifier
+                .width(120.dp)
+                .pointerInput(Unit) {
+                    detectTapGestures {
+                        navController.navigate(Screen.AnimalList.route)
+                    }
+                }) {
+                Image(
+                    painter = painterResource(id = R.drawable.sample_dog_image),
+                    contentDescription = ""
+                )
             }
             Column(
                 modifier = Modifier.padding(start = 16.dp),
-                horizontalAlignment = Alignment.Start) {
+                horizontalAlignment = Alignment.Start
+            ) {
                 val context = LocalContext.current
-                Text(text = "${onReservationInfoState.reservationLong}박 ${onReservationInfoState.reservationLong+1}일 / ${onReservationInfoState.reservationLong*onReservationInfoState.hotelPricePerDay}원",
-                    modifier = Modifier.padding(bottom = 20.dp))
-                Button(onClick = {
-                    // 여기에 원하는 파라미터를 사용하여 sendReservationData를 직접 호출합니다.
-                    val onReservationStateSnap = reservationViewModel.onReservationState.value
-                    for (i in 0 until onReservationStateSnap.reservationLong) {
-                        sendReservationData(
-                            facilityId = onReservationStateSnap.hotelId,
-                            animalId = onReservationStateSnap.animalId,
-                            reservationDate = LocalDate.parse(onReservationStateSnap.reservationDate1!!.plusDays(i).toString()),
-                            customerId = onReservationStateSnap.customerId
-                        ) { result ->
-                            result.fold(
-                                onSuccess = {
-                                    // 예약 성공 시 처리
-                                    println("예약 성공: $it")
-                                    Toast.makeText(context, "예약 성공", Toast.LENGTH_SHORT).show()
-                                    navController.navigate(Screen.Main.route)
-                                },
-                                onFailure = { error ->
-                                    // 예약 실패 시 처리
-                                    println("예약 실패: ${error.message}")
-                                }
-                            )
+                Text(
+                    text = "${onReservationInfoState.reservationLong}박 ${onReservationInfoState.reservationLong + 1}일 / ${onReservationInfoState.reservationLong * onReservationInfoState.hotelPricePerDay}원",
+                )
+                if (onReservationInfoState.animalId!=0) {
+                    Text(text = profileViewModel.getAnimalInfoByID(onReservationInfoState.animalId).animalName)
+                }
+                Button(
+                    modifier = Modifier.padding(top = 20.dp),
+                    onClick = {
+                        // 여기에 원하는 파라미터를 사용하여 sendReservationData를 직접 호출합니다.
+                        val onReservationStateSnap = reservationViewModel.onReservationState.value
+                        for (i in 0 until onReservationStateSnap.reservationLong) {
+                            sendReservationData(
+                                facilityId = onReservationStateSnap.hotelId,
+                                animalId = onReservationStateSnap.animalId,
+                                reservationDate = LocalDate.parse(
+                                    onReservationStateSnap.reservationDate1!!.plusDays(
+                                        i
+                                    ).toString()
+                                ),
+                                customerId = onReservationStateSnap.customerId
+                            ) { result ->
+                                result.fold(
+                                    onSuccess = {
+                                        // 예약 성공 시 처리
+                                        println("예약 성공: $it")
+                                        Toast.makeText(context, "예약 성공", Toast.LENGTH_SHORT).show()
+                                        navController.navigate(Screen.Main.route)
+                                    },
+                                    onFailure = { error ->
+                                        // 예약 실패 시 처리
+                                        println("예약 실패: ${error.message}")
+                                    }
+                                )
+                            }
                         }
-                    }
-                },
+                    },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = ColorPalette.primaryPink,
                         disabledContainerColor = Color.Gray
                     ),
-                    enabled = if (reservationViewModel.onReservationState.collectAsState().value.reservationDate2==null) false else true
+                    enabled = if (reservationViewModel.onReservationState.collectAsState().value.reservationDate2 == null) false else true
                 ) {
                     Text(text = "예약하기")
                 }

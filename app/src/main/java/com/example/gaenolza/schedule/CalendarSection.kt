@@ -154,10 +154,10 @@ fun CalendarComponent(reservationViewModel: ReservationViewModel) {
                                         null,
                                         0L,
                                         0,
-                                        0,
-                                        0,
-                                        0,
-                                        0)
+                                        onReservationInfoState.animalId,
+                                        onReservationInfoState.hotelId,
+                                        onReservationInfoState.customerId,
+                                        onReservationInfoState.hotelPricePerDay)
                                 )
                             }
                             else -> {
