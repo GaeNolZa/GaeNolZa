@@ -32,36 +32,52 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.gaenolza.Screen
 import com.example.gaenolza.ui.theme.ColorPalette
 import com.example.gaenolza.viewmodel.HotelData
 import com.example.gaenolza.viewmodel.HotelViewModel
+import com.example.gaenolza.viewmodel.ReservationViewModel
 
 
 @Composable
 fun HotelScreen(
     navController: NavController,
-    hotelViewModel: HotelViewModel // hotels 대신 호텔 뷰모델
+    hotelViewModel: HotelViewModel, // hotels 대신 호텔 뷰모델
+    reservationViewModel: ReservationViewModel
 ) {
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(8.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         val hotels = hotelViewModel.getHotelInfo()
 
         item {
-            Text(
-                "추천 호텔",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(5.dp)
+                        .height(30.dp)
+                        .background(Color(0xFFFF5BA0))
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    "추천 호텔",
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
             Spacer(modifier = Modifier.height(8.dp))
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(hotels.take(3)) { hotel -> // hotels 리스트에서 상위 3개 항목 사용
                     FeaturedHotelCard(hotel, onHotelClick = {
-                        navController.navigate("hotelDetail/${hotel.id}")
+                        reservationViewModel.updatePathHotelId(hotel.id)
+                        navController.navigate(Screen.HotelDetail.route)
                     })
                 }
             }
@@ -69,17 +85,29 @@ fun HotelScreen(
 
         item {
             Spacer(modifier = Modifier.height(24.dp))
-            Text(
-                "모든 호텔",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(5.dp)
+                        .height(30.dp)
+                        .background(Color(0xFFFF5BA0))
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    "모든 호텔",
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
             Spacer(modifier = Modifier.height(8.dp))
         }
 
         items(hotels) { hotel -> // hotels 리스트 사용
             HotelCard(hotel, onHotelClick = {
-                navController.navigate("hotelDetail/${hotel.id}")
+                reservationViewModel.updatePathHotelId(hotel.id)
+                navController.navigate(Screen.HotelDetail.route)
             })
         }
     }

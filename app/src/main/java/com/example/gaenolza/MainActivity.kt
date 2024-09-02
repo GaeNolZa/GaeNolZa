@@ -50,6 +50,7 @@ import androidx.navigation.navArgument
 import com.example.gaenolza.network.sendGetFacilities
 import com.example.gaenolza.network.sendLoginData
 import com.example.gaenolza.schedule.ScheduleMainScreen
+import com.example.gaenolza.screens.AnimalListScreen
 import com.example.gaenolza.screens.AnimalRegisterScreen
 import com.example.gaenolza.screens.DogScreen
 import com.example.gaenolza.screens.HotelDetailScreen
@@ -65,6 +66,7 @@ import com.example.gaenolza.ui.theme.GaeNolZaTheme
 import com.example.gaenolza.viewmodel.HotelData
 import com.example.gaenolza.viewmodel.HotelViewModel
 import com.example.gaenolza.viewmodel.ProfileViewModel
+import com.example.gaenolza.viewmodel.ReservationViewModel
 import com.exyte.animatednavbar.AnimatedNavigationBar
 import com.exyte.animatednavbar.animation.balltrajectory.Parabolic
 import com.exyte.animatednavbar.animation.indendshape.Height
@@ -76,6 +78,7 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
     private val profileViewModel: ProfileViewModel by viewModels()
     private val hotelViewModel: HotelViewModel by viewModels()
+    private val reservationViewModel: ReservationViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -86,7 +89,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             GaeNolZaTheme {
-                GaeNolZaMain(profileViewModel, hotelViewModel)
+                GaeNolZaMain(profileViewModel, hotelViewModel, reservationViewModel)
             }
         }
     }
@@ -105,13 +108,18 @@ sealed class Screen(
     data object MyPage : Screen("myPage")
     data object AnimalRegister : Screen("animalRegister")
     data object Schedule : Screen("schedule")
-    data object HotelDetail : Screen("hotelDetail/{hotelId}")
+    data object HotelDetail : Screen("hotelDetail")
     data object DogScr : Screen("dog/{dogID}")
     data object Reservation : Screen("reservation")
+    data object AnimalList : Screen("animalList")
 }
 
 @Composable
-fun GaeNolZaMain(profileViewModel: ProfileViewModel, hotelViewModel: HotelViewModel) {
+fun GaeNolZaMain(
+    profileViewModel: ProfileViewModel,
+    hotelViewModel: HotelViewModel,
+    reservationViewModel: ReservationViewModel
+) {
     val navController = rememberNavController()
     var isLoggedIn by remember { mutableStateOf(false) }
     var selectedItem by remember { mutableIntStateOf(0) }
@@ -136,6 +144,7 @@ fun GaeNolZaMain(profileViewModel: ProfileViewModel, hotelViewModel: HotelViewMo
                             reviewCount = facility.reviewCount,
                             price = (100000..200000).random(), // 가격은 임의로 설정
                             numOfRooms = facility.numberOfRooms,
+                            address = facility.address,
                             imageResId = R.drawable.ic_hotel // 이미지 리소스는 고정값이나 로직에 따라 변경 가능
                         )
                     }
@@ -154,7 +163,8 @@ fun GaeNolZaMain(profileViewModel: ProfileViewModel, hotelViewModel: HotelViewMo
             TopBar(
                 onSearchClick = { showSearch = !showSearch },
                 showSearch = showSearch,
-                navController
+                navController,
+                reservationViewModel
             )
         },
         bottomBar = {
@@ -240,11 +250,9 @@ fun GaeNolZaMain(profileViewModel: ProfileViewModel, hotelViewModel: HotelViewMo
         ) {
             composable(Screen.Main.route) {
                 HomeScreen(
-                    onCardClick = { cardId ->
-                        println("Card clicked: $cardId")
-                    },
                     hotelViewModel, // hotels 리스트 대신 호텔 뷰모델 전달
-                    navController = navController
+                    navController = navController,
+                    reservationViewModel
                 )
             }
             composable(Screen.Profile.route) {
@@ -271,6 +279,7 @@ fun GaeNolZaMain(profileViewModel: ProfileViewModel, hotelViewModel: HotelViewMo
                                                     // 이전 Profile 화면을 스택에서 제거하여 뒤로가기 시 돌아가지 않도록 설정
                                                 }
                                             }
+                                            reservationViewModel.updatePathCustomerId(7)
                                         },
                                         onFailure = { error ->
                                             println("Login failed: ${error.message}")
@@ -297,18 +306,20 @@ fun GaeNolZaMain(profileViewModel: ProfileViewModel, hotelViewModel: HotelViewMo
             composable(Screen.Hotel.route) {
                 HotelScreen(
                     navController = navController,
-                    hotelViewModel
+                    hotelViewModel,
+                    reservationViewModel
                 )
             }
             composable(
                 route = Screen.HotelDetail.route,
-                arguments = listOf(navArgument("hotelId") { type = NavType.IntType })
+//                arguments = listOf(navArgument("hotelId") { type = NavType.IntType })
             ) { backStackEntry ->
-                val hotelId = backStackEntry.arguments?.getInt("hotelId") ?: return@composable
+//                val hotelId = backStackEntry.arguments?.getInt("hotelId") ?: return@composable
                 HotelDetailScreen(
                     navController = navController,
-                    hotelId = hotelId,
-                    hotelViewModel
+//                    hotelId = hotelId,
+                    hotelViewModel,
+                    reservationViewModel
                 ) //호텔 뷰모델전달로 변경
             }
             composable(Screen.MyPage.route) {
@@ -325,7 +336,7 @@ fun GaeNolZaMain(profileViewModel: ProfileViewModel, hotelViewModel: HotelViewMo
                 )
             }
             composable(Screen.AnimalRegister.route) { AnimalRegisterScreen(navController) }
-            composable(Screen.Schedule.route) { ScheduleMainScreen() }
+            composable(Screen.Schedule.route) { ScheduleMainScreen(reservationViewModel, profileViewModel, navController) }
             composable(
                 Screen.DogScr.route,
                 arguments = listOf(navArgument("dogID") { type = NavType.IntType })
@@ -333,7 +344,8 @@ fun GaeNolZaMain(profileViewModel: ProfileViewModel, hotelViewModel: HotelViewMo
                 val dogId = backStackEntry.arguments?.getInt("dogID") ?: 0
                 DogScreen(profileViewModel, navController, dogId)
             }
-            composable(Screen.Reservation.route) { ReservationScreen(7) }
+            composable(Screen.Reservation.route) { ReservationScreen(reservationViewModel,hotelViewModel,7) }
+            composable(Screen.AnimalList.route) { AnimalListScreen(profileViewModel,reservationViewModel,navController) }
         }
     }
 }

@@ -37,6 +37,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,6 +55,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gaenolza.R
 import com.example.gaenolza.ui.theme.ColorPalette
+import com.example.gaenolza.viewmodel.OnReservationInfo
+import com.example.gaenolza.viewmodel.ReservationViewModel
 import java.time.LocalDate
 import java.time.Month
 import java.time.YearMonth
@@ -63,11 +66,11 @@ import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun CalendarComponent() {
+fun CalendarComponent(reservationViewModel: ReservationViewModel) {
     var currentYearMonth by remember { mutableStateOf(YearMonth.now()) }
     var selectedDate1 by remember { mutableStateOf<LocalDate?>(null) }
     var selectedDate2 by remember { mutableStateOf<LocalDate?>(null) }
-
+    val onReservationInfoState = reservationViewModel.onReservationState.collectAsState().value
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -146,9 +149,32 @@ fun CalendarComponent() {
                             date -> {
                                 selectedDate1 = null
                                 selectedDate2 = null
+                                reservationViewModel.updateOnReservationDataState(
+                                    OnReservationInfo(null,
+                                        null,
+                                        0L,
+                                        0,
+                                        onReservationInfoState.animalId,
+                                        onReservationInfoState.hotelId,
+                                        onReservationInfoState.customerId,
+                                        onReservationInfoState.hotelPricePerDay)
+                                )
                             }
-                            else -> selectedDate2 = date
-                        } },
+                            else -> {
+                                selectedDate2 = date
+                                val updateReservationInfo = OnReservationInfo(
+                                    listOfNotNull(selectedDate1, selectedDate2).minOrNull(),
+                                    listOfNotNull(selectedDate1, selectedDate2).maxOrNull(),
+                                    daysBetween(selectedDate1!!, selectedDate2!!),
+                                    daysBetween(selectedDate1!!, selectedDate2!!)*onReservationInfoState.hotelPricePerDay,
+                                    onReservationInfoState.animalId,
+                                    onReservationInfoState.hotelId,
+                                    onReservationInfoState.customerId,
+                                    onReservationInfoState.hotelPricePerDay
+                                )
+                                reservationViewModel.updateOnReservationDataState(updateReservationInfo)
+                            }
+                        }                                         },
                         isInSelect = dateInRange(selectedDate1,
                             selectedDate2,
                             date)
@@ -458,5 +484,7 @@ fun dateInRange(date1: LocalDate?, date2: LocalDate?, inputDate: LocalDate): Boo
 }
 
 fun daysBetween(date1: LocalDate, date2: LocalDate): Long {
-    return ChronoUnit.DAYS.between(date1, date2)
+    val minDate = listOfNotNull(date1, date2).minOrNull() ?: return 0
+    val maxDate = listOfNotNull(date1, date2).maxOrNull() ?: return 0
+    return ChronoUnit.DAYS.between(minDate, maxDate)
 }

@@ -1,3 +1,4 @@
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,7 +32,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,16 +56,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.gaenolza.R
+import com.example.gaenolza.Screen
 import com.example.gaenolza.screens.HotelStar
 import com.example.gaenolza.viewmodel.HotelData
 import com.example.gaenolza.viewmodel.HotelViewModel
+import com.example.gaenolza.viewmodel.ReservationViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    onCardClick: (Int) -> Unit,
     hotelViewModel: HotelViewModel,
-    navController: NavController
+    navController: NavController,
+    reservationViewModel: ReservationViewModel
 ) {
     val hotels = hotelViewModel.hotelDataListState.collectAsState().value
 
@@ -77,10 +87,11 @@ fun HomeScreen(
             item {
                 RecommendationSection(
                     onMoreClick = { /* TODO: Handle more click */ },
-                    hotels, navController
+                    hotels, navController,
+                    reservationViewModel
                 )
             }
-            item { PromotionCardSection(onCardClick = onCardClick) }
+            item { PromotionCardSection() }
             item { IconButtonGrid() }
             item { VeterinarianSection(onVeterinarianClick = { /* TODO: Handle vet click */ }) }
         }
@@ -91,7 +102,8 @@ fun HomeScreen(
 fun RecommendationSection(
     onMoreClick: () -> Unit,
     hotels: List<HotelData>,
-    navController: NavController
+    navController: NavController,
+    reservationViewModel: ReservationViewModel
 ) {
     Column(modifier = Modifier.padding(8.dp)) {
         Row(
@@ -128,7 +140,10 @@ fun RecommendationSection(
             items(hotels.size) { index ->
                 RecommendationCard(
                     hotelData = hotels[index],
-                    onRecommendCardTap = { navController.navigate("hotelDetail/${hotels[index].id}") }
+                    onRecommendCardTap = {
+                        reservationViewModel.updatePathHotelId(hotels[index].id)
+                        navController.navigate(Screen.HotelDetail.route)
+                    }
                 )
             }
         }
@@ -253,7 +268,8 @@ fun RecommendationCard(
 //}
 
 @Composable
-fun PromotionCardSection(onCardClick: (Int) -> Unit) {
+fun PromotionCardSection(
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -267,7 +283,9 @@ fun PromotionCardSection(onCardClick: (Int) -> Unit) {
             buttonText = "쿠폰받기 >",
             backgroundColor = Color(0xFFFFE8EC),
             modifier = Modifier.weight(1f),
-            onClick = onCardClick
+            onClick = {
+
+            }
         )
         PromotionCard(
             id = 1,
@@ -276,7 +294,7 @@ fun PromotionCardSection(onCardClick: (Int) -> Unit) {
             buttonText = "쿠폰받기 >",
             backgroundColor = Color(0xFFE8F4FF),
             modifier = Modifier.weight(1f),
-            onClick = onCardClick
+            onClick = { }
         )
     }
 }

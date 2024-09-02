@@ -24,7 +24,6 @@ data class AnimalData(
 class ProfileViewModel : ViewModel() {
     val profileDataState = MutableStateFlow<ProfileData>(ProfileData("", "", "", 0))
     val animalDataState = MutableStateFlow<List<AnimalData>>(emptyList())
-    val hotelImages = listOf(R.drawable.hotel1, R.drawable.hotel2, R.drawable.hotel3)
 
     fun updateAnimalDataState(updateList: List<AnimalData>) {
         animalDataState.value = updateList
@@ -34,8 +33,8 @@ class ProfileViewModel : ViewModel() {
         return animalDataState.value
     }
 
-    fun getAnimalInfoByID(dogID: Int): AnimalData? {
-        return animalDataState.value.find { it.animalId == dogID }
+    fun getAnimalInfoByID(dogID: Int): AnimalData {
+        return animalDataState.value.find { it.animalId == dogID } ?: AnimalData(0,0,"","",LocalDate.now(),"")
     }
 
 

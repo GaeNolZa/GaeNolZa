@@ -39,16 +39,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.gaenolza.R
+import com.example.gaenolza.Screen
 import com.example.gaenolza.network.sendGetFacilities
 import com.example.gaenolza.ui.theme.ColorPalette
 import com.example.gaenolza.viewmodel.Facility
+import com.example.gaenolza.viewmodel.ReservationViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(
     onSearchClick: () -> Unit,
     showSearch: Boolean,
-    navController: NavController
+    navController: NavController,
+    reservationViewModel: ReservationViewModel
 ) {
     var searchQuery by remember { mutableStateOf("") }
     var isSearchActive by remember { mutableStateOf(false) }
@@ -155,7 +158,8 @@ fun TopBar(
                                 .background(Color.LightGray)
                                 .padding(8.dp)
                                 .clickable {
-                                    navController.navigate("hotelDetail/${facility.facilityId}")
+                                    reservationViewModel.updatePathHotelId(facility.facilityId)
+                                    navController.navigate(Screen.HotelDetail.route)
                                     onSearchClick()
                                 }
                         )

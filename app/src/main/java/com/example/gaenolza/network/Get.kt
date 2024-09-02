@@ -3,6 +3,7 @@ package com.example.gaenolza.network
 import com.example.gaenolza.dataclass.Reservation
 import com.example.gaenolza.viewmodel.AnimalData
 import com.example.gaenolza.viewmodel.Facility
+import com.example.gaenolza.viewmodel.ReservationData
 import org.json.JSONArray
 import org.json.JSONObject
 import java.time.LocalDate
@@ -126,7 +127,7 @@ fun sendGetFacilities(
 
 fun sendGetReservations(
     customerId: Int, // 고객 ID를 인자로 받음
-    onResult: (Result<List<Reservation>>) -> Unit
+    onResult: (Result<List<ReservationData>>) -> Unit
 ) {
     val url = "$SERVER_ADDRESS/reservation/list/customer/$customerId" // 고객 ID에 따라 적절한 엔드포인트로 URL 설정
 
@@ -135,11 +136,11 @@ fun sendGetReservations(
             onSuccess = { responseData ->
                 try {
                     val jsonArray = JSONArray(responseData)
-                    val reservations = mutableListOf<Reservation>()
+                    val reservations = mutableListOf<ReservationData>()
 
                     for (i in 0 until jsonArray.length()) {
                         val jsonObject = jsonArray.getJSONObject(i)
-                        val reservation = Reservation(
+                        val reservation = ReservationData(
                             reservationId = jsonObject.getInt("reservationId"),
                             facilityId = jsonObject.getInt("facilityId"),
                             animalId = jsonObject.getInt("animalId"),
