@@ -1,5 +1,6 @@
 package com.example.gaenolza.schedule
 
+import android.content.Context
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -38,8 +39,14 @@ import com.example.gaenolza.ui.theme.ColorPalette
 import com.example.gaenolza.ui.theme.GaeNolZaTheme
 import com.example.gaenolza.viewmodel.ProfileViewModel
 import com.example.gaenolza.viewmodel.ReservationViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 
+@OptIn(DelicateCoroutinesApi::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ScheduleMainScreen(
@@ -95,6 +102,7 @@ fun ScheduleMainScreen(
                 Button(
                     modifier = Modifier.padding(top = 20.dp),
                     onClick = {
+                        val customScope = CoroutineScope(Dispatchers.Main)
                         // 여기에 원하는 파라미터를 사용하여 sendReservationData를 직접 호출합니다.
                         val onReservationStateSnap = reservationViewModel.onReservationState.value
                         for (i in 0 until onReservationStateSnap.reservationLong) {
@@ -112,8 +120,10 @@ fun ScheduleMainScreen(
                                     onSuccess = {
                                         // 예약 성공 시 처리
                                         println("예약 성공: $it")
-                                        Toast.makeText(context, "예약 성공", Toast.LENGTH_SHORT).show()
-                                        navController.navigate(Screen.Main.route)
+                                        customScope.launch{
+                                            Toast.makeText(context, "예약 성공", Toast.LENGTH_SHORT).show()
+                                            navController.navigate(Screen.Main.route)
+                                        }
                                     },
                                     onFailure = { error ->
                                         // 예약 실패 시 처리
