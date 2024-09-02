@@ -46,18 +46,30 @@ fun HotelScreen(
     reservationViewModel: ReservationViewModel
 ) {
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(8.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         val hotels = hotelViewModel.getHotelInfo()
 
         item {
-            Text(
-                "추천 호텔",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(5.dp)
+                        .height(30.dp)
+                        .background(Color(0xFFFF5BA0))
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    "추천 호텔",
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
             Spacer(modifier = Modifier.height(8.dp))
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -73,11 +85,22 @@ fun HotelScreen(
 
         item {
             Spacer(modifier = Modifier.height(24.dp))
-            Text(
-                "모든 호텔",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(5.dp)
+                        .height(30.dp)
+                        .background(Color(0xFFFF5BA0))
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    "모든 호텔",
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
             Spacer(modifier = Modifier.height(8.dp))
         }
 

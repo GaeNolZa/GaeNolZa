@@ -81,7 +81,7 @@ suspend fun sendMessageToServer(message: String): String {
 }
 
 // Retrofit 설정
-val BASE_URL = "http://192.168.45.153:5000/" // 서버 IP 주소 업데이트
+val BASE_URL = "http://192.168.45.219:5000/" // 서버 IP 주소 업데이트
 
 object RetrofitInstance {
     private val retrofit = Retrofit.Builder()
