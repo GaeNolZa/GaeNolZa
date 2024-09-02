@@ -1,88 +1,128 @@
-package com.example.gaenolza.screens.chatbot
-
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.gaenolza.screens.chatbot.sendMessageToServer
+import com.example.gaenolza.screens.chatbot.translateAtoB
+import com.example.gaenolza.ui.theme.ColorPalette
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+data class ChatMessage(
+    val content: String,
+    val isFromUser: Boolean
+)
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatBotScreen() {
     val coroutineScope = rememberCoroutineScope()
-    val chatHistory = remember { mutableStateListOf<String>() }
+    val chatHistory = remember { mutableStateListOf<ChatMessage>() }
     var userInput by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .background(Color(0xFFF3F3F3))
     ) {
+        // Chat history
         LazyColumn(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            reverseLayout = true
         ) {
-            items(chatHistory) { message ->
-                Text(text = message, modifier = Modifier.padding(8.dp))
+            items(chatHistory.asReversed()) { message ->
+                ChatBubble(message)
+                Spacer(modifier = Modifier.height(8.dp))
             }
         }
 
-        if (isLoading) {
-            LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-        }
-
-        Row(modifier = Modifier.fillMaxWidth()) {
-            TextField(
-                value = userInput,
-                onValueChange = { userInput = it },
-                modifier = Modifier.weight(1f),
-                placeholder = { Text("메시지를 입력하세요") },
-                enabled = !isLoading,
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Send),
-                keyboardActions = KeyboardActions(
-                    onSend = {
+        // Input area
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+            shape = RoundedCornerShape(24.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .height(56.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                TextField(
+                    value = userInput,
+                    onValueChange = { userInput = it },
+                    modifier = Modifier.weight(1f),
+                    placeholder = { Text("무엇을 도와드릴까요?") },
+                    colors = TextFieldDefaults.textFieldColors(
+                        containerColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
+                    ),
+                    singleLine = true
+                )
+                IconButton(
+                    onClick = {
                         if (userInput.isNotEmpty() && !isLoading) {
                             sendMessage(coroutineScope, userInput, chatHistory) {
                                 isLoading = it
                                 if (!it) userInput = ""
                             }
                         }
-                    }
-                )
-            )
-            Button(
-                onClick = {
-                    if (userInput.isNotEmpty() && !isLoading) {
-                        sendMessage(coroutineScope, userInput, chatHistory) {
-                            isLoading = it
-                            if (!it) userInput = ""
-                        }
-                    }
-                },
-                enabled = userInput.isNotEmpty() && !isLoading
-            ) {
-                Text("Send")
+                    },
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(ColorPalette.primaryPink)
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.Send,
+                        contentDescription = "Send",
+                        tint = Color.White
+                    )
+                }
             }
+        }
+    }
+}
+
+@Composable
+fun ChatBubble(message: ChatMessage) {
+    val bubbleColor = if (message.isFromUser) ColorPalette.primaryPink else Color.White
+    val textColor = if (message.isFromUser) Color.White else Color.Black
+    val alignment = if (message.isFromUser) Alignment.CenterEnd else Alignment.CenterStart
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        contentAlignment = alignment
+    ) {
+        Surface(
+            color = bubbleColor,
+            shape = RoundedCornerShape(18.dp)
+        ) {
+            Text(
+                text = message.content,
+                color = textColor,
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
+            )
         }
     }
 }
@@ -90,20 +130,20 @@ fun ChatBotScreen() {
 private fun sendMessage(
     coroutineScope: CoroutineScope,
     userInput: String,
-    chatHistory: SnapshotStateList<String>,
+    chatHistory: SnapshotStateList<ChatMessage>,
     updateLoadingState: (Boolean) -> Unit
 ) {
     coroutineScope.launch {
         updateLoadingState(true)
-        chatHistory.add("You: $userInput")
+        chatHistory.add(ChatMessage(userInput, isFromUser = true))
 
         try {
             val translatedInput = translateAtoB(userInput, "Korean", "English")
             val serverResponse = sendMessageToServer(translatedInput)
             val translatedResponse = translateAtoB(serverResponse, "English", "Korean")
-            chatHistory.add("Bot: $translatedResponse")
+            chatHistory.add(ChatMessage(translatedResponse, isFromUser = false))
         } catch (e: Exception) {
-            chatHistory.add("Error: ${e.localizedMessage}")
+            chatHistory.add(ChatMessage("Error: ${e.localizedMessage}", isFromUser = false))
         } finally {
             updateLoadingState(false)
         }
