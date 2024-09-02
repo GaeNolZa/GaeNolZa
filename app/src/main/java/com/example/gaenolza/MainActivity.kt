@@ -1,5 +1,6 @@
 package com.example.gaenolza
 
+import ChatBotScreen
 import HomeScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -61,7 +62,6 @@ import com.example.gaenolza.screens.ReservationScreen
 import com.example.gaenolza.screens.ServiceScreen
 import com.example.gaenolza.screens.SignupScreen
 import com.example.gaenolza.screens.TopBar
-import com.example.gaenolza.screens.chatbot.ChatBotScreen
 import com.example.gaenolza.ui.theme.GaeNolZaTheme
 import com.example.gaenolza.viewmodel.HotelData
 import com.example.gaenolza.viewmodel.HotelViewModel
