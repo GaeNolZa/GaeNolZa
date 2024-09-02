@@ -29,7 +29,7 @@ data class HotelData(
 
 class HotelViewModel : ViewModel() {
     val hotelDataListState = MutableStateFlow<List<HotelData>>(emptyList())
-    val facilityDataListState = MutableStateFlow<List<Facility>>(emptyList())
+    private val facilityDataListState = MutableStateFlow<List<Facility>>(emptyList())
 
     fun getHotelInfo(): List<HotelData> {
         return hotelDataListState.value
